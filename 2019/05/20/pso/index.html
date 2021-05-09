@@ -28,15 +28,15 @@
 <meta property="og:site_name" content="Mencia&#39;s Blog">
 <meta property="og:description" content="粒子群算法，也称粒子群优化算法或鸟群觅食算法（Particle Swarm Optimization），缩写为PSO">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/20/pso/pso/1.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/20/pso/pso/2.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/20/pso/1.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/20/pso/2.png">
 <meta property="article:published_time" content="2019-05-20T08:37:05.000Z">
 <meta property="article:modified_time" content="2021-01-02T09:57:22.677Z">
 <meta property="article:author" content="Mengqiu">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="PSO">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://mencia12.github.io/2019/05/20/pso/pso/1.png">
+<meta name="twitter:image" content="https://mencia12.github.io/2019/05/20/pso/1.png">
 
 
 <link rel="canonical" href="https://mencia12.github.io/2019/05/20/pso/">
@@ -294,7 +294,7 @@
 <li><strong>最大速度$v_{max}$</strong><br>  决定粒子在一个循环中最大的移动距离，通常设定为粒子的范围宽度。</li>
 <li><strong>粒子数</strong><br>  一般取20～40，对较难或特定类别的问题可以取100～200。</li>
 </ul>
-<h1 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h1><p>PSO算法思想很简单，先初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置，当最大循环数以及最小错误要求停止。<br><img src="pso/1.png" alt="suanfa"></p>
+<h1 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h1><p>PSO算法思想很简单，先初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置，当最大循环数以及最小错误要求停止。<br><img src="/2019/05/20/pso/1.png" alt="suanfa"></p>
 <p>#算法实现<br>例子：$f(x)=x_1^2+x_2^2 \qquad x_1,x_2 \in[-10,10]$，求解最小值</p>
 <ol>
 <li>先建立一个PSO类，我们所要做的步骤，分别是设置参数，初始化种群，设置目标函数，进行迭代更新粒子位置<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">class PSO():</span><br><span class="line">    # ----------------------初始化种群-------------------------</span><br><span class="line">    def __init__(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    #  ----------------------目标函数---------------------------</span><br><span class="line">    def function(self, x):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    # ----------------------更新粒子位置------------------------</span><br><span class="line">    def iterator(self):</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure></li>
@@ -302,7 +302,7 @@
 <li>设置目标函数<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def function(self, x):</span><br><span class="line">    return np.sum(np.square(x), axis=1)</span><br></pre></td></tr></table></figure></li>
 <li>更新粒子位置<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">def iterator(self):</span><br><span class="line">    for step in range(self.steps):</span><br><span class="line">        # self.g_fit[step] = self.fit</span><br><span class="line">        r1 = np.random.rand(self.pN, self.dim)</span><br><span class="line">        r2 = np.random.rand(self.pN, self.dim)</span><br><span class="line">        self.v = self.w * self.v + self.c1 * r1 * (self.pbest - self.x) + self.c2 * r2 * (self.gbest - self.x)</span><br><span class="line">        self.x = self.v + self.x</span><br><span class="line">        fitness = self.function(self.x)</span><br><span class="line"></span><br><span class="line">        plt.clf()</span><br><span class="line">        plt.scatter(self.x[:, 0], self.x[:, 1], c=&#x27;k&#x27;)</span><br><span class="line">        plt.scatter(self.gbest[0], self.gbest[1], c=&#x27;r&#x27;)</span><br><span class="line">        plt.xlim(self.x_bound[0], self.x_bound[1])</span><br><span class="line">        plt.ylim(self.x_bound[0], self.x_bound[1])</span><br><span class="line">        plt.pause(0.01)</span><br><span class="line"></span><br><span class="line">        update = np.greater(self.p_fit, fitness)</span><br><span class="line">        self.pbest[update] = self.x[update]</span><br><span class="line">        self.p_fit[update] = fitness[update]</span><br><span class="line">        if np.min(fitness) &lt; self.fit:</span><br><span class="line">            self.gbest = self.x[np.argmin(fitness)]</span><br><span class="line">            self.fit = np.min(fitness)</span><br></pre></td></tr></table></figure>
 最后进行一个测试<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    pso = PSO(<span class="number">100</span>, <span class="number">100</span>, <span class="number">2</span>)</span><br><span class="line">    pso.iterator()</span><br><span class="line">    pso.show()</span><br></pre></td></tr></table></figure>
-<img src="pso/2.png" alt="result"><blockquote>
+<img src="/2019/05/20/pso/2.png" alt="result"><blockquote>
 <p>粒子群算法是对现实中规律的总结和应用，具体怎么使用还要看我们遇到的问题，和对问题的理解</p>
 </blockquote>
 </li>

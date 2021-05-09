@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Mencia&#39;s Blog">
 <meta property="og:description" content="网络程序设计简单的总结ψ(｀∇´)ψ">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mencia12.github.io/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png">
 <meta property="article:published_time" content="2019-06-14T06:34:48.000Z">
 <meta property="article:modified_time" content="2021-01-19T04:25:43.586Z">
 <meta property="article:author" content="Mengqiu">
@@ -37,7 +37,7 @@
 <meta property="article:tag" content="NOTE">
 <meta property="article:tag" content="C">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://mencia12.github.io/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png">
+<meta name="twitter:image" content="https://mencia12.github.io/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png">
 
 
 <link rel="canonical" href="https://mencia12.github.io/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">
@@ -334,7 +334,7 @@
 <blockquote>
 <p>flags=0，相当于read和write函数<br>flags=MSG_DONTROUTE，发送数据不查找路由表，适用于局域网，或同一网段<br>flags=MSG_OOB，发送和接收带外数据<br>flags=MSG_PEEK，接收数据时不从缓冲区移走数据，其他进程调用read或recv仍然可以读到数据<br>flags=MSG_WAITALL，数据量不够时，读操作等待，不返回，但在收到、文件结束符、信号以及出错时，仍然会结束。</p>
 </blockquote>
-<h2 id="高级socket函数-1"><a href="#高级socket函数-1" class="headerlink" title="高级socket函数"></a>高级socket函数</h2><p><img src="%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png" alt="1"></p>
+<h2 id="高级socket函数-1"><a href="#高级socket函数-1" class="headerlink" title="高级socket函数"></a>高级socket函数</h2><p><img src="/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png" alt="1"></p>
 <h2 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h2><p><strong>多路复用函数select</strong></p>
 <blockquote>
 <p>int select(int maxfd,fd_set *rdset,fd_set *wrest,fd_set *exset,struct timeval *timeout);<br>功能：检查多个文件描述符（socket描述符）是否就绪，当某一个描述符就绪（可读、可写或发生异常）时函数返回。可以实现输入输出多路复用<br>返回值：有描述符就绪则返回就绪的描述符个数；超时时间内没有描述符就绪返回0；执行失败返回-1。</p>

@@ -28,21 +28,21 @@
 <meta property="og:site_name" content="Mencia&#39;s Blog">
 <meta property="og:description" content="安装环境：操作系统：Windows 10JDK版本：JDK 1.8以上的Java开发和运行环境">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/1.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/2.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/3.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/4.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/5.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/6.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/7.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/9.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/10.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/11.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/14.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/13.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/12.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/15.png">
-<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/16.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/1.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/2.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/3.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/4.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/5.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/6.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/7.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/9.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/10.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/11.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/14.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/13.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/12.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/15.png">
+<meta property="og:image" content="https://mencia12.github.io/2019/05/27/hadoop/16.png">
 <meta property="article:published_time" content="2019-05-27T12:24:59.000Z">
 <meta property="article:modified_time" content="2021-01-02T09:56:13.276Z">
 <meta property="article:author" content="Mengqiu">
@@ -50,7 +50,7 @@
 <meta property="article:tag" content="Hadoop">
 <meta property="article:tag" content="Windows">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://mencia12.github.io/2019/05/27/hadoop/hadoop/1.png">
+<meta name="twitter:image" content="https://mencia12.github.io/2019/05/27/hadoop/1.png">
 
 
 <link rel="canonical" href="https://mencia12.github.io/2019/05/27/hadoop/">
@@ -292,13 +292,13 @@
 <h1 id="什么是Hadoop"><a href="#什么是Hadoop" class="headerlink" title="什么是Hadoop"></a>什么是Hadoop</h1><p>　　Hadoop是一款支持数据密集型分布式应用程序并以Apache 2.0许可协议发布的开源软件框架。它支持在商品硬件构建的大型集群上运行的应用程序。Hadoop是根据谷歌公司发表的MapReduce和Google文件系统的论文自行实现而成。所有的Hadoop模块都有一个基本假设，即硬件故障是常见情况，应该由框架自动处理。</p>
 <p>　　Hadoop框架透明地为应用提供可靠性和数据移动。它实现了名为MapReduce的编程范式：应用程序被分割成许多小部分，而每个部分都能在集群中的任意节点上运行或重新运行。此外，Hadoop还提供了分布式文件系统，用以存储所有计算节点的数据，这为整个集群带来了非常高的带宽。MapReduce和分布式文件系统的设计，使得整个框架能够自动处理节点故障。它使应用程序与成千上万的独立计算的计算机和PB级的数据连接起来。</p>
 <p>以上内容来自维基百科。不过对于我来说，开始学习某一套技术只有当我亲自动手实践后，才能真正理解这套技术解决了什么问题，并且有益于后续的学习。下来就让我们开始吧！</p>
-<h1 id="Hadoop配置"><a href="#Hadoop配置" class="headerlink" title="Hadoop配置"></a>Hadoop配置</h1><p>1 先检查下自己的配置环境，主要是JDK版本<br><img src="hadoop/1.png" alt="java"><br>2 下载进制压缩包文件:<a target="_blank" rel="noopener" href="http://archive.apache.org/dist/hadoop/core/hadoop-3.0.0/">hadoop-3.0.0.tar.gz </a><br><img src="hadoop/2.png" alt="h"><br>3 下载针对Windows环境的Hadoop修正程序:<a target="_blank" rel="noopener" href="https://github.com/steveloughran/winutils">winutils-master.zip</a><br><img src="hadoop/3.png" alt="wm"><br>4 将hadoop-3.0.0.tar.gz解压至 <strong>C:\Soft\Hadoop</strong>（可以根据自己喜好更改Hadoop安装目录）<br><img src="hadoop/4.png" alt="h"><br>5 新增环境变量<strong>HADOOP_HOME</strong>（作为系统变量），并将其值设为</p>
+<h1 id="Hadoop配置"><a href="#Hadoop配置" class="headerlink" title="Hadoop配置"></a>Hadoop配置</h1><p>1 先检查下自己的配置环境，主要是JDK版本<br><img src="/2019/05/27/hadoop/1.png" alt="java"><br>2 下载进制压缩包文件:<a target="_blank" rel="noopener" href="http://archive.apache.org/dist/hadoop/core/hadoop-3.0.0/">hadoop-3.0.0.tar.gz </a><br><img src="/2019/05/27/hadoop/2.png" alt="h"><br>3 下载针对Windows环境的Hadoop修正程序:<a target="_blank" rel="noopener" href="https://github.com/steveloughran/winutils">winutils-master.zip</a><br><img src="/2019/05/27/hadoop/3.png" alt="wm"><br>4 将hadoop-3.0.0.tar.gz解压至 <strong>C:\Soft\Hadoop</strong>（可以根据自己喜好更改Hadoop安装目录）<br><img src="/2019/05/27/hadoop/4.png" alt="h"><br>5 新增环境变量<strong>HADOOP_HOME</strong>（作为系统变量），并将其值设为</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C:\Soft\Hadoop\bin</span><br><span class="line">(这里根据你自己解压的位置设置)</span><br></pre></td></tr></table></figure>
-<p>（设置方法：进入“控制面板\系统和安全\系统”，然后点击“高级系统设置”，然后点击“环境变量(N)..”按钮）<br><img src="hadoop/5.png" alt="h"><br>6 观察<strong>JAVA_HOME</strong>变量设置是否正确，这个后面会用到。<br><img src="hadoop/6.png" alt="h"><br>7 将<strong>C:\Soft\Hadoop\bin</strong>路径添加到Path环境变量。(这是本人的，记得换成自己的)<br>8 将如下内容粘贴到..\Hadoop\etc\hadoop\core-site.xml文件</p>
+<p>（设置方法：进入“控制面板\系统和安全\系统”，然后点击“高级系统设置”，然后点击“环境变量(N)..”按钮）<br><img src="/2019/05/27/hadoop/5.png" alt="h"><br>6 观察<strong>JAVA_HOME</strong>变量设置是否正确，这个后面会用到。<br><img src="/2019/05/27/hadoop/6.png" alt="h"><br>7 将<strong>C:\Soft\Hadoop\bin</strong>路径添加到Path环境变量。(这是本人的，记得换成自己的)<br>8 将如下内容粘贴到..\Hadoop\etc\hadoop\core-site.xml文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">    &lt;name&gt;fs.defaultFS&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
 <p>9 将如下内容粘贴到..\Hadoop\etc\hadoop\mapred-site.xml文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">    &lt;name&gt;mapreduce.framework.name&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;yarn&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
-<p>10 在..\Hadoop路径下创建“data”子目录；<br>在..\Hadoop\data路径下创建“namenode”子目录；<br>在..\Hadoop\data路径下创建“datanode”子目录。<br><img src="hadoop/7.png" alt="d"><br>11 将如下内容粘贴到..\Hadoop\etc\hadoop\hdfs-site.xml文件<br>（里面的路径记得换成自己的）</p>
+<p>10 在..\Hadoop路径下创建“data”子目录；<br>在..\Hadoop\data路径下创建“namenode”子目录；<br>在..\Hadoop\data路径下创建“datanode”子目录。<br><img src="/2019/05/27/hadoop/7.png" alt="d"><br>11 将如下内容粘贴到..\Hadoop\etc\hadoop\hdfs-site.xml文件<br>（里面的路径记得换成自己的）</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">   &lt;property&gt;</span><br><span class="line">       &lt;name&gt;dfs.replication&lt;/name&gt;</span><br><span class="line">       &lt;value&gt;1&lt;/value&gt;</span><br><span class="line">   &lt;/property&gt;</span><br><span class="line">   &lt;property&gt;</span><br><span class="line">       &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;</span><br><span class="line">       &lt;value&gt;file:///C:/Soft/hadoop/data/namenode&lt;/value&gt;</span><br><span class="line">   &lt;/property&gt;</span><br><span class="line">   &lt;property&gt;</span><br><span class="line">       &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;</span><br><span class="line">       &lt;value&gt;file:///C:/Soft/hadoop/data/datanode&lt;/value&gt;</span><br><span class="line">   &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
 <p>12 将如下内容粘贴到..\Hadoop\etc\hadoop\yarn-site.xml文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">   &lt;property&gt;</span><br><span class="line">    	&lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">    	&lt;value&gt;mapreduce_shuffle&lt;/value&gt;</span><br><span class="line">   &lt;/property&gt;</span><br><span class="line">   &lt;property&gt;</span><br><span class="line">      	&lt;name&gt;yarn.nodemanager.auxservices.mapreduce.shuffle.class&lt;/name&gt;  </span><br><span class="line">	&lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;</span><br><span class="line">   &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
@@ -313,24 +313,24 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INFO common.Storage: Storage directory C:\Soft\hadoop\data\namenode has been successfully formatted</span><br></pre></td></tr></table></figure>
 <p>3 输入下面的命令。如果一切正常，将会启动一个“hdfs namenode”进程和一个“hdfs datanode”进程，构成了只有1个主节点和1个从节点的“HDFS分布式文件系统集群”。可以通过<a target="_blank" rel="noopener" href="http://localhost:9870/">http://localhost:9870</a>监控HDFS系统。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ..\Hadoop\sbin</span><br><span class="line">start-dfs</span><br></pre></td></tr></table></figure>
-<p><img src="hadoop/9.png" alt="s"><br>4 关闭HDFS分布式文件系统。</p>
+<p><img src="/2019/05/27/hadoop/9.png" alt="s"><br>4 关闭HDFS分布式文件系统。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ..\Hadoop\sbin</span><br><span class="line">stop-dfs</span><br></pre></td></tr></table></figure>
 <h1 id="WordCount示例的使用"><a href="#WordCount示例的使用" class="headerlink" title="WordCount示例的使用"></a>WordCount示例的使用</h1><p>首先，以管理员身份启动命令行，进到sbin文件夹下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd C:\Soft\Hadoop\sbin</span><br></pre></td></tr></table></figure>
-<p><img src="hadoop/10.png" alt="1"><br>启动Hadoop</p>
+<p><img src="/2019/05/27/hadoop/10.png" alt="1"><br>启动Hadoop</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start-all</span><br></pre></td></tr></table></figure>
-<p><img src="hadoop/11.png" alt="2"><br>如果正常的话会打开四个窗口<br><img src="hadoop/14.png" alt="w"><br>新建一个txt文件作为数据样本<br>test.txt</p>
+<p><img src="/2019/05/27/hadoop/11.png" alt="2"><br>如果正常的话会打开四个窗口<br><img src="/2019/05/27/hadoop/14.png" alt="w"><br>新建一个txt文件作为数据样本<br>test.txt</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hello</span><br><span class="line">world</span><br><span class="line">qit</span><br><span class="line">stop</span><br><span class="line">sdf</span><br><span class="line">apple</span><br><span class="line">EA</span><br><span class="line">steam</span><br><span class="line">orange</span><br></pre></td></tr></table></figure>
 <p>在Hadoop中新建一个test文件夹</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -mkdir /test</span><br></pre></td></tr></table></figure>
-<p><img src="hadoop/13.png" alt="3"><br>将test.txt上传到test文件夹中，查看一下</p>
+<p><img src="/2019/05/27/hadoop/13.png" alt="3"><br>将test.txt上传到test文件夹中，查看一下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -put C:\Else\test.txt \test</span><br><span class="line">hadoop fs -ls /</span><br><span class="line">hadoop fs -ls /test</span><br></pre></td></tr></table></figure>
-<p><img src="hadoop/12.png" alt="4"><br>到此准备工作就已经做完了。</p>
+<p><img src="/2019/05/27/hadoop/12.png" alt="4"><br>到此准备工作就已经做完了。</p>
 <p>WordCount是Hadoop自带的一个示例程序，在../Hadoop\share\hadoop\mapreduce文件夹下能找到名称里带有examples的jar包</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar C:\Soft\Hadoop\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.0.0.jar wordcount \test \output</span><br></pre></td></tr></table></figure>
-<p><img src="hadoop/15.png" alt="5"><br>运行完成后能在output文件夹下看的两个文件，最终的结果就存在part-r-00000中</p>
+<p><img src="/2019/05/27/hadoop/15.png" alt="5"><br>运行完成后能在output文件夹下看的两个文件，最终的结果就存在part-r-00000中</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -ls /output</span><br><span class="line">hadoop fs -cat /output/part-r-00000</span><br></pre></td></tr></table></figure>
-<p><img src="hadoop/16.png" alt="6"><br>输入结束命令，关闭系统</p>
+<p><img src="/2019/05/27/hadoop/16.png" alt="6"><br>输入结束命令，关闭系统</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stop-all</span><br></pre></td></tr></table></figure>
 
 <h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><p>代码|操作<br>-|-|-<br>hadoop fs –ls / |    显示根目录下的所有文件和目录|<br>hadoop fs –mkdir /test|    创建子目录/test，创建多级目录 加上 –p|<br>hadoop fs -rm /test1.txt|    删除文件|<br>hadoop fs -rm -r /test|    删除子目录（要加-r参数）|<br>hadoop fs -put C:\tmp\test.txt \test|    将本地文件上传到HDFS分布式文件系统|<br>hadoop fs -cat \test\test.txt|    查看文件内容|<br>hadoop fs -cp URI [URI …] |    cp 复制系统内文件|<br>hadoop fs -get[-ignorecrc] [-crc] |    下载文件到本地|<br>hadoop fs -mv URI [URI …] |    将文件从源路径移动到目标路径|<br>hadoop fs -du URI [URI …]|    显示文件大小|</p>
