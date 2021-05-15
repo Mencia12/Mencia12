@@ -153,7 +153,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">代码</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">算法实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">代码</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -275,8 +275,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><strong>粒子群算法，也称粒子群优化算法或鸟群觅食算法（Particle Swarm Optimization），缩写为PSO</strong></p>
-<span id="more"></span>
+        <p><strong>粒子群算法，也称粒子群优化算法或鸟群觅食算法（Particle Swarm Optimization），缩写为PSO</strong><br><span id="more"></span></p>
 <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>粒子群算法（PSO）是模拟群体智能所建立起来的一种优化算法，主要用于解决最优化问题。基本思想是通过群体中个体之间的协作和信息共享来寻找最优解</p>
 <p>算法是模拟鸟群或蜂群的觅食行为。假设这样一个问题：一群鸟在随机的搜索食物，在一块区域里只有一块食物，所有的鸟都不知道食物在哪。但是它们知道自己的当前位置距离食物有多远。那么这群鸟找到食物的最优策略就是搜寻目前离食物最近的鸟的周围区域。</p>
 <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>粒子群算法就是对上面问题的一个抽象。</p>
@@ -287,8 +286,8 @@
 <li>每一次单位时间的飞行后，所有粒子分享信息，下一步将飞向自身最佳位置和全局最优位置的加权中心</li>
 </ul>
 <p>初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置。</p>
-<p>举个例子，假设在D维搜索空间中，有m个粒子<br>其中第i个粒子的位置为矢量，记$\vec{x}<em>i=(x</em>{i1},x_{i2},\ldots,x_{iD})$<br>其飞翔速度也是一个矢量，记$\vec{v}<em>i=(v</em>{i1},v_{i2},\ldots,v_{iD})$<br>第i个粒子搜索到的最优位置为$\vec{p}<em>i=(p</em>{i1},p_{i2},\ldots,p_{iD})$<br>整个粒子群搜索到的最优位置为$\vec{p}<em>{gbest}=(p</em>{gbest1},p_{gbest2},\ldots,p_{gbestD})$</p>
-<p><strong>第i个粒子的位置和速度更新为</strong><br>$v_{id}^{k+1}=wv_{id}^{k}+c_1rand()(p_{id}-x_{id}^k)+c_2rand()(p_{gbest}-x_{id}^k)$<br>$x_{id}^{k+1}=x_{id}^{k}+v_{id}^{k} \qquad i=1,2,\ldots,m \quad d=1,2,\ldots,D$<br>其中，$w$称为惯性权重;$c_1$和$c_2$为两个正常系数，称为加速因子;$rand()$为(0,1)之间的随机数;$v_{id}^{k}$限制在一个最大速度$v_{max}$内。</p>
+<p>举个例子，假设在D维搜索空间中，有m个粒子<br>其中第i个粒子的位置为矢量，记$\vec{x}<em>i=(x</em>{i1},x<em>{i2},\ldots,x</em>{iD})$<br>其飞翔速度也是一个矢量，记$\vec{v}<em>i=(v</em>{i1},v<em>{i2},\ldots,v</em>{iD})$<br>第i个粒子搜索到的最优位置为$\vec{p}<em>i=(p</em>{i1},p<em>{i2},\ldots,p</em>{iD})$<br>整个粒子群搜索到的最优位置为$\vec{p}<em>{gbest}=(p</em>{gbest1},p<em>{gbest2},\ldots,p</em>{gbestD})$</p>
+<p><strong>第i个粒子的位置和速度更新为</strong><br>$v<em>{id}^{k+1}=wv</em>{id}^{k}+c<em>1rand()(p</em>{id}-x<em>{id}^k)+c_2rand()(p</em>{gbest}-x<em>{id}^k)$<br>$x</em>{id}^{k+1}=x<em>{id}^{k}+v</em>{id}^{k} \qquad i=1,2,\ldots,m \quad d=1,2,\ldots,D$<br>其中，$w$称为惯性权重;$c<em>1$和$c_2$为两个正常系数，称为加速因子;$rand()$为(0,1)之间的随机数;$v</em>{id}^{k}$限制在一个最大速度$v_{max}$内。</p>
 <p><strong>简单解释一下：</strong></p>
 <ul>
 <li><strong>惯性权重$w$</strong><br>   使粒子保持运动惯性，使其有扩展搜索空间的趋势，有能力探索新的区域。<br>   表示微粒对当前自身运动状态的信任，依据自身的速度进行惯性运动。<br>   较大的w有利于跳出局部极值，而较小的w有利于算法收敛。</li>
@@ -297,7 +296,7 @@
 <li><strong>粒子数</strong><br>  一般取20～40，对较难或特定类别的问题可以取100～200。</li>
 </ul>
 <h1 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h1><p>PSO算法思想很简单，先初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置，当最大循环数以及最小错误要求停止。<br><img src="/2019/05/20/pso/1.png" alt="suanfa"></p>
-<p>#算法实现<br>例子：$f(x)=x_1^2+x_2^2 \qquad x_1,x_2 \in[-10,10]$，求解最小值</p>
+<h1 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h1><p>例子：$f(x)=x_1^2+x_2^2 \qquad x_1,x_2 \in[-10,10]$，求解最小值</p>
 <ol>
 <li>先建立一个PSO类，我们所要做的步骤，分别是设置参数，初始化种群，设置目标函数，进行迭代更新粒子位置<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">class PSO():</span><br><span class="line">    # ----------------------初始化种群-------------------------</span><br><span class="line">    def __init__(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    #  ----------------------目标函数---------------------------</span><br><span class="line">    def function(self, x):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    # ----------------------更新粒子位置------------------------</span><br><span class="line">    def iterator(self):</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure></li>
 <li>初始化参数<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">def __init__(self, pN, max_steps, dim=2, bound=[-10, 10], v_max=2, w=0.6, c1=2, c2=2):</span><br><span class="line">    self.pN = pN</span><br><span class="line">    self.dim = dim</span><br><span class="line">    self.steps = max_steps</span><br><span class="line"></span><br><span class="line">    self.w = w</span><br><span class="line">    self.c1 = c1</span><br><span class="line">    self.c2 = c2</span><br><span class="line">    self.x_bound = bound</span><br><span class="line"></span><br><span class="line">    self.x = np.random.uniform(self.x_bound[0], self.x_bound[1], (self.pN, self.dim))</span><br><span class="line">    self.v = np.random.rand(self.pN, self.dim) * v_max</span><br><span class="line">    self.pbest = self.x  # 个体的最佳位置</span><br><span class="line">    fitness = self.function(self.x)</span><br><span class="line">    self.gbest = self.x[np.argmin(fitness)]  # 全局最佳位置</span><br><span class="line">    self.p_fit = fitness  # 每个个体最佳适应值</span><br><span class="line">    self.fit = np.max(fitness)  # 全局最佳适应值</span><br></pre></td></tr></table></figure></li>
@@ -420,6 +419,12 @@
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{&quot;enable&quot;:true,&quot;tags&quot;:&quot;all&quot;,&quot;js&quot;:{&quot;url&quot;:&quot;https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;npm&#x2F;mathjax@3.1.4&#x2F;es5&#x2F;tex-mml-chtml.js&quot;,&quot;integrity&quot;:&quot;sha256-ncNI9OXOS5Ek4tzVYiOMmN&#x2F;KKCPZ6V0Cpv2P&#x2F;zHntiA&#x3D;&quot;}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
 
 
 
