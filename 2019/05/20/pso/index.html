@@ -286,8 +286,8 @@
 <li>每一次单位时间的飞行后，所有粒子分享信息，下一步将飞向自身最佳位置和全局最优位置的加权中心</li>
 </ul>
 <p>初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置。</p>
-<p>举个例子，假设在D维搜索空间中，有m个粒子<br>其中第i个粒子的位置为矢量，记$\vec{x}<em>i=(x</em>{i1},x<em>{i2},\ldots,x</em>{iD})$<br>其飞翔速度也是一个矢量，记$\vec{v}<em>i=(v</em>{i1},v<em>{i2},\ldots,v</em>{iD})$<br>第i个粒子搜索到的最优位置为$\vec{p}<em>i=(p</em>{i1},p<em>{i2},\ldots,p</em>{iD})$<br>整个粒子群搜索到的最优位置为$\vec{p}<em>{gbest}=(p</em>{gbest1},p<em>{gbest2},\ldots,p</em>{gbestD})$</p>
-<p><strong>第i个粒子的位置和速度更新为</strong><br>$v<em>{id}^{k+1}=wv</em>{id}^{k}+c<em>1rand()(p</em>{id}-x<em>{id}^k)+c_2rand()(p</em>{gbest}-x<em>{id}^k)$<br>$x</em>{id}^{k+1}=x<em>{id}^{k}+v</em>{id}^{k} \qquad i=1,2,\ldots,m \quad d=1,2,\ldots,D$<br>其中，$w$称为惯性权重;$c<em>1$和$c_2$为两个正常系数，称为加速因子;$rand()$为(0,1)之间的随机数;$v</em>{id}^{k}$限制在一个最大速度$v_{max}$内。</p>
+<p>举个例子，假设在D维搜索空间中，有m个粒子<br>其中第i个粒子的位置为矢量，记$\vec{x}_i=(x_{i1},x_{i2},\ldots,x_{iD})$<br>其飞翔速度也是一个矢量，记$\vec{v}_i=(v_{i1},v_{i2},\ldots,v_{iD})$<br>第i个粒子搜索到的最优位置为$\vec{p}_i=(p_{i1},p_{i2},\ldots,p_{iD})$<br>整个粒子群搜索到的最优位置为$\vec{p}_{gbest}=(p_{gbest1},p_{gbest2},\ldots,p_{gbestD})$</p>
+<p><strong>第i个粒子的位置和速度更新为</strong><br>$v_{id}^{k+1}=wv_{id}^{k}+c_1rand()(p_{id}-x_{id}^k)+c_2rand()(p_{gbest}-x_{id}^k)$<br>$x_{id}^{k+1}=x_{id}^{k}+v_{id}^{k} \qquad i=1,2,\ldots,m \quad d=1,2,\ldots,D$<br>其中，$w$称为惯性权重;$c_1$和$c_2$为两个正常系数，称为加速因子;$rand()$为(0,1)之间的随机数;$v_{id}^{k}$限制在一个最大速度$v_{max}$内。</p>
 <p><strong>简单解释一下：</strong></p>
 <ul>
 <li><strong>惯性权重$w$</strong><br>   使粒子保持运动惯性，使其有扩展搜索空间的趋势，有能力探索新的区域。<br>   表示微粒对当前自身运动状态的信任，依据自身的速度进行惯性运动。<br>   较大的w有利于跳出局部极值，而较小的w有利于算法收敛。</li>
