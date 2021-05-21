@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Python|基于BOF算法的图像检索</title>
+    <url>/2019/07/07/BOF/</url>
+    <content><![CDATA[<p><strong>BoF(Bag of features)算法在图像分类中具有着重要的作用</strong><br><span id="more"></span></p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Bag of Features方法仿照文本检索领域的Bag-of-Words方法，把每幅图像描述为一个局部区域/关键点(Patches/Key Points)特征的无序集合。<br>使用某种聚类算法(如K-means)将局部特征进行聚类，每个聚类中心被看作是词典中的一个<strong>视觉词汇</strong>(Visual Word)，相当于文本检索中的词，视觉词汇由聚类中心对应特征形成的<strong>码字</strong>(code word)来表示。<br>图像中的每个特征都将被映射到视觉词典的某个词上，这种映射可以通过计算特征间的距离去实现，然后统计每个视觉词汇的出现与否或次数，图像可描述为一个维数相同的直方图向量。</p>
+<h1 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h1><p>基本流程可以分为四步：</p>
+<h2 id="特征提取"><a href="#特征提取" class="headerlink" title="特征提取"></a>特征提取</h2><p>从原始图像中提取特征，常用的特征提取方法有SIFT，SURF。SIFT得到的特征描述是128维度的向量，相比SISF，SURF计算量更小些，得到的特征是64维的向量。也有使用HoG和LBP来进行特征提取的。注意特征提取的方法要满足旋转不变性以及尺寸不变性。<br><img src="/2019/07/07/BOF/3.png" alt="3"></p>
+<h2 id="字典生成"><a href="#字典生成" class="headerlink" title="字典生成"></a>字典生成</h2><p>对所有的图片提取完特征后，将所有的特征进行聚类，比如使用K-Means聚类，得到K类，每个类别看作一个word，这样我们就得到了字典，如下图所示。<br><img src="/2019/07/07/BOF/4.png" alt="4"></p>
+<h2 id="直方图表示"><a href="#直方图表示" class="headerlink" title="直方图表示"></a>直方图表示</h2><p>上一步训练得到的字典，是为了这一步对图像特征进行量化。对于一幅图像而言，我们可以提取出大量的特征，但这些特征(如SIFT提取的特征)仍然属于一种浅层的表示，缺乏代表性。因此，这一步的目标，是根据字典重新提取图像的高层特征。具体做法是，对于每一张图片得到的每一个特征(如SIFT提取的特征)，都可以在字典中找到一个最相似的word(实际上就是将特征输入到得到的聚类模型，得到类别)，统计相似的每种word的数量，于是就得到一个K维的直方图。如下图所示。<br><img src="/2019/07/07/BOF/5.png" alt="5"></p>
+<h2 id="训练分类器"><a href="#训练分类器" class="headerlink" title="训练分类器"></a>训练分类器</h2><p>对于每张图片，我们得到了其对应的直方图向量，当然也知道其对应的属于哪种物品的标记。这样我们就可以构造训练集来训练某种分类器。当需要进行预测时，我们先测试集的图片中提取特征，然后利用字典量化得到直方图，输入训练好的分类器，得到预测的类别。</p>
+<h1 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h1><h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>本次实验采用了三个类别：[‘aeroplane’, ‘bicycle’, ‘car’]，在train文件夹下有三个子文件夹表示各类。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_paths</span>(<span class="params">path</span>):</span></span><br><span class="line">    <span class="comment"># 获取训练数据类别</span></span><br><span class="line">    training_names = os.listdir(path)</span><br><span class="line">    <span class="comment"># 获取图片路径及标签</span></span><br><span class="line">    image_paths = [] <span class="comment"># 获取所有图片路径</span></span><br><span class="line">    image_classes = [] <span class="comment">#记录每张图片的标签，[0,...,0,1,...,1,2,...,2]</span></span><br><span class="line">    class_id = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        name = os.path.join(path, training_name)</span><br><span class="line">        class_path = <span class="built_in">list</span>(paths.list_images(name))</span><br><span class="line">        image_paths += class_path</span><br><span class="line">        image_classes += [class_id] * <span class="built_in">len</span>(class_path)</span><br><span class="line">        class_id += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Label \t\t  count&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;---------------------&quot;</span>)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;0:10&#125; &#123;1:6d&#125;&#x27;</span>.<span class="built_in">format</span>(training_name, image_classes.count(i)))</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> training_names, image_paths, image_classes</span><br></pre></td></tr></table></figure><br><img src="/2019/07/07/BOF/6.png" alt="6"></p>
+<h2 id="提取图像特征"><a href="#提取图像特征" class="headerlink" title="提取图像特征"></a>提取图像特征</h2><p>这里采用的是OpenCV自带的SIFT算法生成图像库中每幅图的特征点及描述符。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#创建特征提取和关键点检测器对象</span></span><br><span class="line">sift=cv2.xfeatures2d.SIFT_create()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特征提取与描述子生成</span></span><br><span class="line">des_list = []</span><br><span class="line"><span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">    im = cv2.imread(image_path)</span><br><span class="line">    kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line">    des_list.append((image_path, des))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;image file path : &quot;</span>, image_path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 描述子向量聚合</span></span><br><span class="line">descriptors = des_list[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line"><span class="keyword">for</span> image_path, descriptor <span class="keyword">in</span> des_list[<span class="number">1</span>:]:</span><br><span class="line">    descriptors = np.vstack((descriptors, descriptor))</span><br></pre></td></tr></table></figure><br><img src="/2019/07/07/BOF/sift.png" alt="s"></p>
+<h2 id="对特征进行聚类"><a href="#对特征进行聚类" class="headerlink" title="对特征进行聚类"></a>对特征进行聚类</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kmeans聚类</span></span><br><span class="line">k = <span class="number">100</span></span><br><span class="line">voc,_= kmeans(descriptors, k, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="根据字典将图片表示成向量"><a href="#根据字典将图片表示成向量" class="headerlink" title="根据字典将图片表示成向量"></a>根据字典将图片表示成向量</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 生成特征直方图</span></span><br><span class="line">im_features = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">    words, distance = vq(des_list[i][<span class="number">1</span>], voc)</span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">        im_features[i][w] += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><img src="/2019/07/07/BOF/histogram.png" alt="h"></p>
+<h2 id="特征集进行加权及量化"><a href="#特征集进行加权及量化" class="headerlink" title="特征集进行加权及量化"></a>特征集进行加权及量化</h2><p>在一篇文档里，“的”“你”“我”等字眼的出现频率高，那么这些word在直方图上的bin就会比较高，并且在每篇文档里都会出现，但是这些并不能作为文档的标识，因此要弱化这些共性特征的权重。</p>
+<blockquote>
+<p>这里采用了TF-IDF加权<br>TF:如果某个关键词在一篇文章中出现的频率高，说明该词语能够表征文章的内容，该关键词在其它文章中很少出现，则认为此词语具有很好的类别区分度，对分类有很大的贡献。<br>IDF:如果文件数据库中包含词语A的文件越少，则IDF越大，说明词语A具有很好的类别区分能力。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># TF-IDF</span></span><br><span class="line">nbr = np.<span class="built_in">sum</span>((im_features &gt; <span class="number">0</span>) * <span class="number">1</span>, axis=<span class="number">0</span>)</span><br><span class="line">idf = np.array(np.log((<span class="number">1.0</span> * <span class="built_in">len</span>(image_paths) + <span class="number">1</span>) / (<span class="number">1.0</span> * nbr + <span class="number">1</span>)), <span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line">im_features = im_features * idf</span><br><span class="line">tf = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">     tf[i] = im_features[i] / (np.<span class="built_in">sum</span>(im_features, axis=<span class="number">1</span>)[i])</span><br><span class="line">     im_features[i] = im_features[i] * tf[i]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 尺度化</span></span><br><span class="line">stdSlr = StandardScaler().fit(im_features)</span><br><span class="line">im_features = stdSlr.transform(im_features)</span><br></pre></td></tr></table></figure></p>
+<h2 id="训练分类器-1"><a href="#训练分类器-1" class="headerlink" title="训练分类器"></a>训练分类器</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">clf = LinearSVC()</span><br><span class="line">clf.fit(im_features, np.array(image_classes))</span><br></pre></td></tr></table></figure>
+<p>最后可以将训练的结果打包并保存<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;training and save model...&quot;</span>)</span><br><span class="line">sklearn.externals.joblib.dump((clf, training_names,std_slr, k, voc, idf), <span class="string">&quot;bof.pkl&quot;</span>, compress=<span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;========================================&quot;</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="预测并测试"><a href="#预测并测试" class="headerlink" title="预测并测试"></a>预测并测试</h2><p>预测步骤和训练相似，先提取图像特征，将提取的图像特征加权并尺度化，代入训练好的分类器<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict_image</span>(<span class="params">image_path</span>):</span></span><br><span class="line"></span><br><span class="line">    clf, classes_names, std_slr, k, voc, idf = sklearn.externals.joblib.load(<span class="string">&quot;bof.pkl&quot;</span>)</span><br><span class="line"></span><br><span class="line">    sift = cv2.xfeatures2d.SIFT_create()</span><br><span class="line">    im = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)</span><br><span class="line">    kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    test_features = np.zeros((<span class="number">1</span>, k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    words, distance = vq(des, voc)</span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">        test_features[<span class="number">0</span>][w] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    test_features = test_features * idf</span><br><span class="line">    tf = test_features / np.<span class="built_in">sum</span>(test_features, axis=<span class="number">1</span>)</span><br><span class="line">    test_features = test_features * tf</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Scale the features</span></span><br><span class="line">    test_features = std_slr.transform(test_features)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform the predictions</span></span><br><span class="line">    predictions = [classes_names[i] <span class="keyword">for</span> i <span class="keyword">in</span> clf.predict(test_features)]</span><br><span class="line">    <span class="keyword">return</span> predictions</span><br></pre></td></tr></table></figure><br>读取测试数据，并输出结果<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>(<span class="params">test_path</span>):</span></span><br><span class="line">    _, image_paths, _ = read_paths(test_path)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        predictions = predict_image(image_path)</span><br><span class="line">        img = cv2.imread(image_path)</span><br><span class="line">        img = cv2.resize(img, (<span class="built_in">int</span>(img.shape[<span class="number">1</span>]*<span class="number">2</span>), <span class="built_in">int</span>(img.shape[<span class="number">0</span>] * <span class="number">2</span>))) <span class="comment">#图片扩大两倍</span></span><br><span class="line">        output=cv2.putText(img, predictions[<span class="number">0</span>], (<span class="number">10</span>, <span class="number">150</span>), cv2.FONT_HERSHEY_COMPLEX, <span class="number">2.0</span>, (<span class="number">100</span>, <span class="number">200</span>, <span class="number">200</span>), <span class="number">5</span>)</span><br><span class="line">        cv2.imshow(image_path, output)</span><br><span class="line">        cv2.waitKey(<span class="number">0</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;image%d: %s, classes : %s&quot;</span> % (i, image_path, predictions))</span><br></pre></td></tr></table></figure><br><img src="/2019/07/07/BOF/result.png" alt="r"><br><img src="/2019/07/07/BOF/7.png" alt="7"></p>
+</blockquote>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sklearn.externals</span><br><span class="line"><span class="keyword">from</span> imutils <span class="keyword">import</span> paths</span><br><span class="line"><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> LinearSVC</span><br><span class="line"><span class="keyword">from</span> scipy.cluster.vq <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_paths</span>(<span class="params">path</span>):</span></span><br><span class="line">    <span class="comment"># 获取训练数据类别</span></span><br><span class="line">    training_names = os.listdir(path)</span><br><span class="line">    <span class="comment"># 获取图片路径及标签</span></span><br><span class="line">    image_paths = [] <span class="comment"># 获取所有图片路径</span></span><br><span class="line">    image_classes = [] <span class="comment">#记录每张图片的标签，[0,...,0,1,...,1,2,...,2]</span></span><br><span class="line">    class_id = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        name = os.path.join(path, training_name)</span><br><span class="line">        class_path = <span class="built_in">list</span>(paths.list_images(name))</span><br><span class="line">        image_paths += class_path</span><br><span class="line">        image_classes += [class_id] * <span class="built_in">len</span>(class_path)</span><br><span class="line">        class_id += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Label \t\t  count&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;---------------------&quot;</span>)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;0:10&#125; &#123;1:6d&#125;&#x27;</span>.<span class="built_in">format</span>(training_name, image_classes.count(i)))</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> training_names, image_paths, image_classes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train</span>(<span class="params">train_path</span>):</span></span><br><span class="line">    training_names, image_paths, image_classes = read_paths(train_path)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 创建SIFT特征提取器</span></span><br><span class="line">    sift = cv2.xfeatures2d.SIFT_create()</span><br><span class="line">    <span class="comment"># 特征提取与描述子生成</span></span><br><span class="line">    des_list = []</span><br><span class="line">    <span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">        im = cv2.imread(image_path)</span><br><span class="line">        kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line">        des_list.append(des)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 描述子向量</span></span><br><span class="line">    descriptors = des_list[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">for</span> descriptor <span class="keyword">in</span> des_list[<span class="number">1</span>:]:</span><br><span class="line">        descriptors = np.vstack((descriptors, descriptor))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 100 聚类 K-Means</span></span><br><span class="line">    k = <span class="number">100</span></span><br><span class="line">    voc, _ = kmeans(descriptors, k, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 生成特征直方图</span></span><br><span class="line">    im_features = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">        words, distance = vq(des_list[i], voc)</span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">            im_features[i][w] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># TF-IDF</span></span><br><span class="line">    nbr = np.<span class="built_in">sum</span>((im_features &gt; <span class="number">0</span>) * <span class="number">1</span>, axis=<span class="number">0</span>)</span><br><span class="line">    idf = np.array(np.log((<span class="number">1.0</span> * <span class="built_in">len</span>(image_paths) + <span class="number">1</span>) / (<span class="number">1.0</span> * nbr + <span class="number">1</span>)), <span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line">    im_features = im_features * idf</span><br><span class="line">    tf = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">        tf[i] = im_features[i] / (np.<span class="built_in">sum</span>(im_features, axis=<span class="number">1</span>)[i])</span><br><span class="line">        im_features[i] = im_features[i] * tf[i]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 尺度化</span></span><br><span class="line">    std_slr = StandardScaler().fit(im_features)</span><br><span class="line">    im_features = std_slr.transform(im_features)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># SVM</span></span><br><span class="line">    clf = LinearSVC()</span><br><span class="line">    clf.fit(im_features, np.array(image_classes))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Save the SVM</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;training and save model...&quot;</span>)</span><br><span class="line">    sklearn.externals.joblib.dump((clf, training_names, std_slr, k, voc, idf), <span class="string">&quot;bof.pkl&quot;</span>, compress=<span class="number">3</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;========================================&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict_image</span>(<span class="params">image_path</span>):</span></span><br><span class="line"></span><br><span class="line">    clf, classes_names, std_slr, k, voc, idf = sklearn.externals.joblib.load(<span class="string">&quot;bof.pkl&quot;</span>)</span><br><span class="line"></span><br><span class="line">    sift = cv2.xfeatures2d.SIFT_create()</span><br><span class="line">    im = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)</span><br><span class="line">    kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    test_features = np.zeros((<span class="number">1</span>, k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    words, distance = vq(des, voc)</span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">        test_features[<span class="number">0</span>][w] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    test_features = test_features * idf</span><br><span class="line">    tf = test_features / np.<span class="built_in">sum</span>(test_features, axis=<span class="number">1</span>)</span><br><span class="line">    test_features = test_features * tf</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Scale the features</span></span><br><span class="line">    test_features = std_slr.transform(test_features)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform the predictions</span></span><br><span class="line">    predictions = [classes_names[i] <span class="keyword">for</span> i <span class="keyword">in</span> clf.predict(test_features)]</span><br><span class="line">    <span class="keyword">return</span> predictions</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>(<span class="params">test_path</span>):</span></span><br><span class="line">    _, image_paths, _ = read_paths(test_path)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        predictions = predict_image(image_path)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;image%d: %s, classes : %s&quot;</span> % (i, image_path, predictions))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    train_path = <span class="string">&quot;C:/Code/Picture/dataset/train/&quot;</span></span><br><span class="line">    train(train_path)</span><br><span class="line"></span><br><span class="line">    test_path = <span class="string">&quot;C:/Code/Picture/dataset/test/&quot;</span></span><br><span class="line">    test(test_path)</span><br></pre></td></tr></table></figure>
+<h1 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h1><ol>
+<li>字典大小的选择也是问题，字典过大，单词缺乏一般性，对噪声敏感，计算量大，关键是图象投影后的维数高；字典太小，单词区分性能差，对相似的目标特征无法表示。</li>
+<li>这种一个特征点对应于一个词的方法显然忽略图像空间上下文，这很容易造成词语义的模糊。</li>
+<li>图像中一般都存在同主题无关的内容，会影响分类的结果，改进方法是检测兴趣区域并给不同的权重。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>BOF</tag>
+        <tag>OpenCV</tag>
+        <tag>SIFT</tag>
+        <tag>Kmeans</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo|用Hexo写博客</title>
     <url>/2019/05/19/Hexo%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<p><strong>简单总结使用的hexo命令</strong><br><span id="more"></span></p>
@@ -55,6 +92,39 @@
       </tags>
   </entry>
   <entry>
+    <title>Python|SIFT算法</title>
+    <url>/2019/06/08/SIFT/</url>
+    <content><![CDATA[<p><strong>尺度不变特征变换（Scale-invariant feature transform，SIFT），是用于图像处理领域的一种描述。</strong><br><span id="more"></span></p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><a href="https://baike.baidu.com/item/SIFT/1396275?fr=aladdin">SIFT算法</a>是一种提取局部特征的算法，基于物体上的一些局部外观的兴趣点而与影像的大小和旋转无关。对于光线、噪声、微视角改变的容忍度也相当高。基于这些特性，它们是高度显著而且相对容易撷取，在母数庞大的特征数据库中，很容易辨识物体而且鲜有误认。使用SIFT特征描述对于部分物体遮蔽的侦测率也相当高，甚至只需要3个以上的SIFT物体特征就足以计算出位置与方位。在现今的电脑硬件速度下和小型的特征数据库条件下，辨识速度可接近即时运算。SIFT特征的信息量大，适合在海量数据库中快速准确匹配。<br>匹配的过程就是对比这些特征点的过程，这个流程可以用下图表述：<br><img src="/2019/06/08/SIFT/1.png" alt="1"></p>
+<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><ul>
+<li>SIFT特征是图像的局部特征，其对旋转、尺度缩放、亮度变化保持不变性，对视角变化、仿射变换、噪声也保持一定程度的稳定性。 </li>
+<li>独特性好，信息量丰富，适用于在海量特征数据库中进行快速、准确匹配。 </li>
+<li>多量性，即使少数的几个物体也可以产生大量SIFT特征向量。 </li>
+<li>高速性，经优化的SIFT匹配算法甚至可以达到实时的要求。 </li>
+<li>可扩展性，可以很方便的与其他形式的特征向量进行联合。</li>
+</ul>
+<h1 id="算法步骤"><a href="#算法步骤" class="headerlink" title="算法步骤"></a>算法步骤</h1><ol>
+<li>检测尺度空间极值点</li>
+<li>精确定位极值点</li>
+<li>为每个关键点指定方向参数</li>
+<li>关键点描述子的生成</li>
+</ol>
+<h1 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h1><p>OpenCV中带有SIFT算法。可以直接调用<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import cv2</span><br><span class="line"></span><br><span class="line">img= cv2.imread(&#x27;C:/Code/Picture/apple.jpg&#x27;)</span><br><span class="line">gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)</span><br><span class="line"></span><br><span class="line">sift=cv2.xfeatures2d.SIFT_create()</span><br><span class="line">keypoints,descriptor=sift.detectAndCompute(gray,None)</span><br><span class="line"></span><br><span class="line">img=cv2.drawKeypoints(image=img,outImage=img,keypoints=keypoints,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS,color=(51,163,236))</span><br><span class="line">cv2.imshow(&#x27;sift_keypoints&#x27;,img)</span><br><span class="line"></span><br><span class="line">cv2.waitKey(0)</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure><br><img src="/2019/06/08/SIFT/new.png" alt="apple"></p>
+<blockquote>
+<p>OpenCV使用SIFT时报错,建议卸载后安装opencv-contrib-python,同时3.4.3.18以上的版本会出现专利问题而无法使用。安装前记得卸载原来的。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">pip install opencv-contrib-python==<span class="number">3.4</span><span class="number">.2</span><span class="number">.17</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<hr>
+<blockquote>
+<p>参考文献<br><a href="https://blog.csdn.net/dcrmg/article/details/52577555">Sift算子特征点提取、描述及匹配全流程解析</a><br><a href="https://blog.csdn.net/dcrmg/article/details/52561656">Sift中尺度空间、高斯金字塔、差分金字塔（DOG金字塔）、图像金字塔</a></p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>OpenCV</tag>
+        <tag>SIFT</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python|Pycharm使用技巧</title>
     <url>/2020/08/15/Pycharm/</url>
     <content><![CDATA[<p><strong>Windows 10 专业版<br>Pycharm 2020.2</strong><br><span id="more"></span></p>
@@ -69,43 +139,6 @@
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python|基于BOF算法的图像检索</title>
-    <url>/2019/07/07/BOF/</url>
-    <content><![CDATA[<p><strong>BoF(Bag of features)算法在图像分类中具有着重要的作用</strong><br><span id="more"></span></p>
-<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Bag of Features方法仿照文本检索领域的Bag-of-Words方法，把每幅图像描述为一个局部区域/关键点(Patches/Key Points)特征的无序集合。<br>使用某种聚类算法(如K-means)将局部特征进行聚类，每个聚类中心被看作是词典中的一个<strong>视觉词汇</strong>(Visual Word)，相当于文本检索中的词，视觉词汇由聚类中心对应特征形成的<strong>码字</strong>(code word)来表示。<br>图像中的每个特征都将被映射到视觉词典的某个词上，这种映射可以通过计算特征间的距离去实现，然后统计每个视觉词汇的出现与否或次数，图像可描述为一个维数相同的直方图向量。</p>
-<h1 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h1><p>基本流程可以分为四步：</p>
-<h2 id="特征提取"><a href="#特征提取" class="headerlink" title="特征提取"></a>特征提取</h2><p>从原始图像中提取特征，常用的特征提取方法有SIFT，SURF。SIFT得到的特征描述是128维度的向量，相比SISF，SURF计算量更小些，得到的特征是64维的向量。也有使用HoG和LBP来进行特征提取的。注意特征提取的方法要满足旋转不变性以及尺寸不变性。<br><img src="/2019/07/07/BOF/3.png" alt="3"></p>
-<h2 id="字典生成"><a href="#字典生成" class="headerlink" title="字典生成"></a>字典生成</h2><p>对所有的图片提取完特征后，将所有的特征进行聚类，比如使用K-Means聚类，得到K类，每个类别看作一个word，这样我们就得到了字典，如下图所示。<br><img src="/2019/07/07/BOF/4.png" alt="4"></p>
-<h2 id="直方图表示"><a href="#直方图表示" class="headerlink" title="直方图表示"></a>直方图表示</h2><p>上一步训练得到的字典，是为了这一步对图像特征进行量化。对于一幅图像而言，我们可以提取出大量的特征，但这些特征(如SIFT提取的特征)仍然属于一种浅层的表示，缺乏代表性。因此，这一步的目标，是根据字典重新提取图像的高层特征。具体做法是，对于每一张图片得到的每一个特征(如SIFT提取的特征)，都可以在字典中找到一个最相似的word(实际上就是将特征输入到得到的聚类模型，得到类别)，统计相似的每种word的数量，于是就得到一个K维的直方图。如下图所示。<br><img src="/2019/07/07/BOF/5.png" alt="5"></p>
-<h2 id="训练分类器"><a href="#训练分类器" class="headerlink" title="训练分类器"></a>训练分类器</h2><p>对于每张图片，我们得到了其对应的直方图向量，当然也知道其对应的属于哪种物品的标记。这样我们就可以构造训练集来训练某种分类器。当需要进行预测时，我们先测试集的图片中提取特征，然后利用字典量化得到直方图，输入训练好的分类器，得到预测的类别。</p>
-<h1 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h1><h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p>本次实验采用了三个类别：[‘aeroplane’, ‘bicycle’, ‘car’]，在train文件夹下有三个子文件夹表示各类。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_paths</span>(<span class="params">path</span>):</span></span><br><span class="line">    <span class="comment"># 获取训练数据类别</span></span><br><span class="line">    training_names = os.listdir(path)</span><br><span class="line">    <span class="comment"># 获取图片路径及标签</span></span><br><span class="line">    image_paths = [] <span class="comment"># 获取所有图片路径</span></span><br><span class="line">    image_classes = [] <span class="comment">#记录每张图片的标签，[0,...,0,1,...,1,2,...,2]</span></span><br><span class="line">    class_id = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        name = os.path.join(path, training_name)</span><br><span class="line">        class_path = <span class="built_in">list</span>(paths.list_images(name))</span><br><span class="line">        image_paths += class_path</span><br><span class="line">        image_classes += [class_id] * <span class="built_in">len</span>(class_path)</span><br><span class="line">        class_id += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Label \t\t  count&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;---------------------&quot;</span>)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;0:10&#125; &#123;1:6d&#125;&#x27;</span>.<span class="built_in">format</span>(training_name, image_classes.count(i)))</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> training_names, image_paths, image_classes</span><br></pre></td></tr></table></figure><br><img src="/2019/07/07/BOF/6.png" alt="6"></p>
-<h2 id="提取图像特征"><a href="#提取图像特征" class="headerlink" title="提取图像特征"></a>提取图像特征</h2><p>这里采用的是OpenCV自带的SIFT算法生成图像库中每幅图的特征点及描述符。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#创建特征提取和关键点检测器对象</span></span><br><span class="line">sift=cv2.xfeatures2d.SIFT_create()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特征提取与描述子生成</span></span><br><span class="line">des_list = []</span><br><span class="line"><span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">    im = cv2.imread(image_path)</span><br><span class="line">    kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line">    des_list.append((image_path, des))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;image file path : &quot;</span>, image_path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 描述子向量聚合</span></span><br><span class="line">descriptors = des_list[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line"><span class="keyword">for</span> image_path, descriptor <span class="keyword">in</span> des_list[<span class="number">1</span>:]:</span><br><span class="line">    descriptors = np.vstack((descriptors, descriptor))</span><br></pre></td></tr></table></figure><br><img src="/2019/07/07/BOF/sift.png" alt="s"></p>
-<h2 id="对特征进行聚类"><a href="#对特征进行聚类" class="headerlink" title="对特征进行聚类"></a>对特征进行聚类</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># kmeans聚类</span></span><br><span class="line">k = <span class="number">100</span></span><br><span class="line">voc,_= kmeans(descriptors, k, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="根据字典将图片表示成向量"><a href="#根据字典将图片表示成向量" class="headerlink" title="根据字典将图片表示成向量"></a>根据字典将图片表示成向量</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 生成特征直方图</span></span><br><span class="line">im_features = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">    words, distance = vq(des_list[i][<span class="number">1</span>], voc)</span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">        im_features[i][w] += <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p><img src="/2019/07/07/BOF/histogram.png" alt="h"></p>
-<h2 id="特征集进行加权及量化"><a href="#特征集进行加权及量化" class="headerlink" title="特征集进行加权及量化"></a>特征集进行加权及量化</h2><p>在一篇文档里，“的”“你”“我”等字眼的出现频率高，那么这些word在直方图上的bin就会比较高，并且在每篇文档里都会出现，但是这些并不能作为文档的标识，因此要弱化这些共性特征的权重。</p>
-<blockquote>
-<p>这里采用了TF-IDF加权<br>TF:如果某个关键词在一篇文章中出现的频率高，说明该词语能够表征文章的内容，该关键词在其它文章中很少出现，则认为此词语具有很好的类别区分度，对分类有很大的贡献。<br>IDF:如果文件数据库中包含词语A的文件越少，则IDF越大，说明词语A具有很好的类别区分能力。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># TF-IDF</span></span><br><span class="line">nbr = np.<span class="built_in">sum</span>((im_features &gt; <span class="number">0</span>) * <span class="number">1</span>, axis=<span class="number">0</span>)</span><br><span class="line">idf = np.array(np.log((<span class="number">1.0</span> * <span class="built_in">len</span>(image_paths) + <span class="number">1</span>) / (<span class="number">1.0</span> * nbr + <span class="number">1</span>)), <span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line">im_features = im_features * idf</span><br><span class="line">tf = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">     tf[i] = im_features[i] / (np.<span class="built_in">sum</span>(im_features, axis=<span class="number">1</span>)[i])</span><br><span class="line">     im_features[i] = im_features[i] * tf[i]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 尺度化</span></span><br><span class="line">stdSlr = StandardScaler().fit(im_features)</span><br><span class="line">im_features = stdSlr.transform(im_features)</span><br></pre></td></tr></table></figure></p>
-<h2 id="训练分类器-1"><a href="#训练分类器-1" class="headerlink" title="训练分类器"></a>训练分类器</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">clf = LinearSVC()</span><br><span class="line">clf.fit(im_features, np.array(image_classes))</span><br></pre></td></tr></table></figure>
-<p>最后可以将训练的结果打包并保存<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;training and save model...&quot;</span>)</span><br><span class="line">sklearn.externals.joblib.dump((clf, training_names,std_slr, k, voc, idf), <span class="string">&quot;bof.pkl&quot;</span>, compress=<span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;========================================&quot;</span>)</span><br></pre></td></tr></table></figure></p>
-<h2 id="预测并测试"><a href="#预测并测试" class="headerlink" title="预测并测试"></a>预测并测试</h2><p>预测步骤和训练相似，先提取图像特征，将提取的图像特征加权并尺度化，代入训练好的分类器<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict_image</span>(<span class="params">image_path</span>):</span></span><br><span class="line"></span><br><span class="line">    clf, classes_names, std_slr, k, voc, idf = sklearn.externals.joblib.load(<span class="string">&quot;bof.pkl&quot;</span>)</span><br><span class="line"></span><br><span class="line">    sift = cv2.xfeatures2d.SIFT_create()</span><br><span class="line">    im = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)</span><br><span class="line">    kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    test_features = np.zeros((<span class="number">1</span>, k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    words, distance = vq(des, voc)</span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">        test_features[<span class="number">0</span>][w] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    test_features = test_features * idf</span><br><span class="line">    tf = test_features / np.<span class="built_in">sum</span>(test_features, axis=<span class="number">1</span>)</span><br><span class="line">    test_features = test_features * tf</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Scale the features</span></span><br><span class="line">    test_features = std_slr.transform(test_features)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform the predictions</span></span><br><span class="line">    predictions = [classes_names[i] <span class="keyword">for</span> i <span class="keyword">in</span> clf.predict(test_features)]</span><br><span class="line">    <span class="keyword">return</span> predictions</span><br></pre></td></tr></table></figure><br>读取测试数据，并输出结果<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>(<span class="params">test_path</span>):</span></span><br><span class="line">    _, image_paths, _ = read_paths(test_path)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        predictions = predict_image(image_path)</span><br><span class="line">        img = cv2.imread(image_path)</span><br><span class="line">        img = cv2.resize(img, (<span class="built_in">int</span>(img.shape[<span class="number">1</span>]*<span class="number">2</span>), <span class="built_in">int</span>(img.shape[<span class="number">0</span>] * <span class="number">2</span>))) <span class="comment">#图片扩大两倍</span></span><br><span class="line">        output=cv2.putText(img, predictions[<span class="number">0</span>], (<span class="number">10</span>, <span class="number">150</span>), cv2.FONT_HERSHEY_COMPLEX, <span class="number">2.0</span>, (<span class="number">100</span>, <span class="number">200</span>, <span class="number">200</span>), <span class="number">5</span>)</span><br><span class="line">        cv2.imshow(image_path, output)</span><br><span class="line">        cv2.waitKey(<span class="number">0</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;image%d: %s, classes : %s&quot;</span> % (i, image_path, predictions))</span><br></pre></td></tr></table></figure><br><img src="/2019/07/07/BOF/result.png" alt="r"><br><img src="/2019/07/07/BOF/7.png" alt="7"></p>
-</blockquote>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sklearn.externals</span><br><span class="line"><span class="keyword">from</span> imutils <span class="keyword">import</span> paths</span><br><span class="line"><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> LinearSVC</span><br><span class="line"><span class="keyword">from</span> scipy.cluster.vq <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_paths</span>(<span class="params">path</span>):</span></span><br><span class="line">    <span class="comment"># 获取训练数据类别</span></span><br><span class="line">    training_names = os.listdir(path)</span><br><span class="line">    <span class="comment"># 获取图片路径及标签</span></span><br><span class="line">    image_paths = [] <span class="comment"># 获取所有图片路径</span></span><br><span class="line">    image_classes = [] <span class="comment">#记录每张图片的标签，[0,...,0,1,...,1,2,...,2]</span></span><br><span class="line">    class_id = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        name = os.path.join(path, training_name)</span><br><span class="line">        class_path = <span class="built_in">list</span>(paths.list_images(name))</span><br><span class="line">        image_paths += class_path</span><br><span class="line">        image_classes += [class_id] * <span class="built_in">len</span>(class_path)</span><br><span class="line">        class_id += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Label \t\t  count&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;---------------------&quot;</span>)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> training_name <span class="keyword">in</span> training_names:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&#123;0:10&#125; &#123;1:6d&#125;&#x27;</span>.<span class="built_in">format</span>(training_name, image_classes.count(i)))</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> training_names, image_paths, image_classes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train</span>(<span class="params">train_path</span>):</span></span><br><span class="line">    training_names, image_paths, image_classes = read_paths(train_path)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 创建SIFT特征提取器</span></span><br><span class="line">    sift = cv2.xfeatures2d.SIFT_create()</span><br><span class="line">    <span class="comment"># 特征提取与描述子生成</span></span><br><span class="line">    des_list = []</span><br><span class="line">    <span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">        im = cv2.imread(image_path)</span><br><span class="line">        kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line">        des_list.append(des)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 描述子向量</span></span><br><span class="line">    descriptors = des_list[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">for</span> descriptor <span class="keyword">in</span> des_list[<span class="number">1</span>:]:</span><br><span class="line">        descriptors = np.vstack((descriptors, descriptor))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 100 聚类 K-Means</span></span><br><span class="line">    k = <span class="number">100</span></span><br><span class="line">    voc, _ = kmeans(descriptors, k, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 生成特征直方图</span></span><br><span class="line">    im_features = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">        words, distance = vq(des_list[i], voc)</span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">            im_features[i][w] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># TF-IDF</span></span><br><span class="line">    nbr = np.<span class="built_in">sum</span>((im_features &gt; <span class="number">0</span>) * <span class="number">1</span>, axis=<span class="number">0</span>)</span><br><span class="line">    idf = np.array(np.log((<span class="number">1.0</span> * <span class="built_in">len</span>(image_paths) + <span class="number">1</span>) / (<span class="number">1.0</span> * nbr + <span class="number">1</span>)), <span class="string">&#x27;float32&#x27;</span>)</span><br><span class="line">    im_features = im_features * idf</span><br><span class="line">    tf = np.zeros((<span class="built_in">len</span>(image_paths), k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(image_paths)):</span><br><span class="line">        tf[i] = im_features[i] / (np.<span class="built_in">sum</span>(im_features, axis=<span class="number">1</span>)[i])</span><br><span class="line">        im_features[i] = im_features[i] * tf[i]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 尺度化</span></span><br><span class="line">    std_slr = StandardScaler().fit(im_features)</span><br><span class="line">    im_features = std_slr.transform(im_features)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># SVM</span></span><br><span class="line">    clf = LinearSVC()</span><br><span class="line">    clf.fit(im_features, np.array(image_classes))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Save the SVM</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;training and save model...&quot;</span>)</span><br><span class="line">    sklearn.externals.joblib.dump((clf, training_names, std_slr, k, voc, idf), <span class="string">&quot;bof.pkl&quot;</span>, compress=<span class="number">3</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;========================================&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">predict_image</span>(<span class="params">image_path</span>):</span></span><br><span class="line"></span><br><span class="line">    clf, classes_names, std_slr, k, voc, idf = sklearn.externals.joblib.load(<span class="string">&quot;bof.pkl&quot;</span>)</span><br><span class="line"></span><br><span class="line">    sift = cv2.xfeatures2d.SIFT_create()</span><br><span class="line">    im = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)</span><br><span class="line">    kpts, des = sift.detectAndCompute(im, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">    test_features = np.zeros((<span class="number">1</span>, k), <span class="string">&quot;float32&quot;</span>)</span><br><span class="line">    words, distance = vq(des, voc)</span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">        test_features[<span class="number">0</span>][w] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    test_features = test_features * idf</span><br><span class="line">    tf = test_features / np.<span class="built_in">sum</span>(test_features, axis=<span class="number">1</span>)</span><br><span class="line">    test_features = test_features * tf</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Scale the features</span></span><br><span class="line">    test_features = std_slr.transform(test_features)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Perform the predictions</span></span><br><span class="line">    predictions = [classes_names[i] <span class="keyword">for</span> i <span class="keyword">in</span> clf.predict(test_features)]</span><br><span class="line">    <span class="keyword">return</span> predictions</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>(<span class="params">test_path</span>):</span></span><br><span class="line">    _, image_paths, _ = read_paths(test_path)</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> image_path <span class="keyword">in</span> image_paths:</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        predictions = predict_image(image_path)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;image%d: %s, classes : %s&quot;</span> % (i, image_path, predictions))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    train_path = <span class="string">&quot;C:/Code/Picture/dataset/train/&quot;</span></span><br><span class="line">    train(train_path)</span><br><span class="line"></span><br><span class="line">    test_path = <span class="string">&quot;C:/Code/Picture/dataset/test/&quot;</span></span><br><span class="line">    test(test_path)</span><br></pre></td></tr></table></figure>
-<h1 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h1><ol>
-<li>字典大小的选择也是问题，字典过大，单词缺乏一般性，对噪声敏感，计算量大，关键是图象投影后的维数高；字典太小，单词区分性能差，对相似的目标特征无法表示。</li>
-<li>这种一个特征点对应于一个词的方法显然忽略图像空间上下文，这很容易造成词语义的模糊。</li>
-<li>图像中一般都存在同主题无关的内容，会影响分类的结果，改进方法是检测兴趣区域并给不同的权重。</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>BOF</tag>
-        <tag>OpenCV</tag>
-        <tag>SIFT</tag>
-        <tag>Kmeans</tag>
       </tags>
   </entry>
   <entry>
@@ -141,39 +174,6 @@
         <tag>分布式</tag>
         <tag>Hadoop</tag>
         <tag>MapReduce</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Python|SIFT算法</title>
-    <url>/2019/06/08/SIFT/</url>
-    <content><![CDATA[<p><strong>尺度不变特征变换（Scale-invariant feature transform，SIFT），是用于图像处理领域的一种描述。</strong><br><span id="more"></span></p>
-<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><a href="https://baike.baidu.com/item/SIFT/1396275?fr=aladdin">SIFT算法</a>是一种提取局部特征的算法，基于物体上的一些局部外观的兴趣点而与影像的大小和旋转无关。对于光线、噪声、微视角改变的容忍度也相当高。基于这些特性，它们是高度显著而且相对容易撷取，在母数庞大的特征数据库中，很容易辨识物体而且鲜有误认。使用SIFT特征描述对于部分物体遮蔽的侦测率也相当高，甚至只需要3个以上的SIFT物体特征就足以计算出位置与方位。在现今的电脑硬件速度下和小型的特征数据库条件下，辨识速度可接近即时运算。SIFT特征的信息量大，适合在海量数据库中快速准确匹配。<br>匹配的过程就是对比这些特征点的过程，这个流程可以用下图表述：<br><img src="/2019/06/08/SIFT/1.png" alt="1"></p>
-<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><ul>
-<li>SIFT特征是图像的局部特征，其对旋转、尺度缩放、亮度变化保持不变性，对视角变化、仿射变换、噪声也保持一定程度的稳定性。 </li>
-<li>独特性好，信息量丰富，适用于在海量特征数据库中进行快速、准确匹配。 </li>
-<li>多量性，即使少数的几个物体也可以产生大量SIFT特征向量。 </li>
-<li>高速性，经优化的SIFT匹配算法甚至可以达到实时的要求。 </li>
-<li>可扩展性，可以很方便的与其他形式的特征向量进行联合。</li>
-</ul>
-<h1 id="算法步骤"><a href="#算法步骤" class="headerlink" title="算法步骤"></a>算法步骤</h1><ol>
-<li>检测尺度空间极值点</li>
-<li>精确定位极值点</li>
-<li>为每个关键点指定方向参数</li>
-<li>关键点描述子的生成</li>
-</ol>
-<h1 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h1><p>OpenCV中带有SIFT算法。可以直接调用<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import cv2</span><br><span class="line"></span><br><span class="line">img= cv2.imread(&#x27;C:/Code/Picture/apple.jpg&#x27;)</span><br><span class="line">gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)</span><br><span class="line"></span><br><span class="line">sift=cv2.xfeatures2d.SIFT_create()</span><br><span class="line">keypoints,descriptor=sift.detectAndCompute(gray,None)</span><br><span class="line"></span><br><span class="line">img=cv2.drawKeypoints(image=img,outImage=img,keypoints=keypoints,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS,color=(51,163,236))</span><br><span class="line">cv2.imshow(&#x27;sift_keypoints&#x27;,img)</span><br><span class="line"></span><br><span class="line">cv2.waitKey(0)</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure><br><img src="/2019/06/08/SIFT/new.png" alt="apple"></p>
-<blockquote>
-<p>OpenCV使用SIFT时报错,建议卸载后安装opencv-contrib-python,同时3.4.3.18以上的版本会出现专利问题而无法使用。安装前记得卸载原来的。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">pip install opencv-contrib-python==<span class="number">3.4</span><span class="number">.2</span><span class="number">.17</span></span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<hr>
-<blockquote>
-<p>参考文献<br><a href="https://blog.csdn.net/dcrmg/article/details/52577555">Sift算子特征点提取、描述及匹配全流程解析</a><br><a href="https://blog.csdn.net/dcrmg/article/details/52561656">Sift中尺度空间、高斯金字塔、差分金字塔（DOG金字塔）、图像金字塔</a></p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>OpenCV</tag>
-        <tag>SIFT</tag>
       </tags>
   </entry>
   <entry>
@@ -352,21 +352,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python|PyTorch入门教程</title>
-    <url>/2020/07/08/pytorch/</url>
-    <content><![CDATA[<p><strong>PyTorch使用心得</strong><br><span id="more"></span></p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>进入<a href="https://pytorch.org/get-started/locally/">PyTorch官网</a>，按照提示选择<br><img src="/2020/07/08/pytorch/1.png" alt="1"></p>
-<blockquote>
-<p>这里</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>深度学习</tag>
-        <tag>PyTorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Windows|linux子系统安装及使用</title>
     <url>/2019/06/19/linux%E5%AD%90%E7%B3%BB%E7%BB%9F/</url>
     <content><![CDATA[<p>Windows 10 专业版<br><span id="more"></span></p>
@@ -388,6 +373,63 @@
       <tags>
         <tag>Windows</tag>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python|粒子群算法实现</title>
+    <url>/2019/05/20/pso/</url>
+    <content><![CDATA[<p><strong>粒子群算法，也称粒子群优化算法或鸟群觅食算法（Particle Swarm Optimization），缩写为PSO</strong><br><span id="more"></span></p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>粒子群算法（PSO）是模拟群体智能所建立起来的一种优化算法，主要用于解决最优化问题。基本思想是通过群体中个体之间的协作和信息共享来寻找最优解</p>
+<p>算法是模拟鸟群或蜂群的觅食行为。假设这样一个问题：一群鸟在随机的搜索食物，在一块区域里只有一块食物，所有的鸟都不知道食物在哪。但是它们知道自己的当前位置距离食物有多远。那么这群鸟找到食物的最优策略就是搜寻目前离食物最近的鸟的周围区域。</p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>粒子群算法就是对上面问题的一个抽象。</p>
+<ul>
+<li>每个鸟抽象为一个无质量，无体积的“粒子”</li>
+<li>每个粒子有一个适应度函数以模拟每只鸟与食物的距离</li>
+<li>每个粒子有一个速度决定它的飞行方向和距离，初始值可以随机确定</li>
+<li>每一次单位时间的飞行后，所有粒子分享信息，下一步将飞向自身最佳位置和全局最优位置的加权中心</li>
+</ul>
+<p>初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置。</p>
+<p>举个例子，假设在D维搜索空间中，有m个粒子<br>其中第i个粒子的位置为矢量，记$\vec{x}_i=(x_{i1},x_{i2},\ldots,x_{iD})$<br>其飞翔速度也是一个矢量，记$\vec{v}_i=(v_{i1},v_{i2},\ldots,v_{iD})$<br>第i个粒子搜索到的最优位置为$\vec{p}_i=(p_{i1},p_{i2},\ldots,p_{iD})$<br>整个粒子群搜索到的最优位置为$\vec{p}_{gbest}=(p_{gbest1},p_{gbest2},\ldots,p_{gbestD})$</p>
+<p><strong>第i个粒子的位置和速度更新为</strong><br>$v_{id}^{k+1}=wv_{id}^{k}+c_1rand()(p_{id}-x_{id}^k)+c_2rand()(p_{gbest}-x_{id}^k)$<br>$x_{id}^{k+1}=x_{id}^{k}+v_{id}^{k} \qquad i=1,2,\ldots,m \quad d=1,2,\ldots,D$<br>其中，$w$称为惯性权重;$c_1$和$c_2$为两个正常系数，称为加速因子;$rand()$为(0,1)之间的随机数;$v_{id}^{k}$限制在一个最大速度$v_{max}$内。</p>
+<p><strong>简单解释一下：</strong></p>
+<ul>
+<li><strong>惯性权重$w$</strong><br>   使粒子保持运动惯性，使其有扩展搜索空间的趋势，有能力探索新的区域。<br>   表示微粒对当前自身运动状态的信任，依据自身的速度进行惯性运动。<br>   较大的w有利于跳出局部极值，而较小的w有利于算法收敛。</li>
+<li><strong>加速常数$c_1$和$c_2$</strong><br>  将c1和c2统一为一个控制参数，φ= c1+c2<br>  如果φ很小，粒子群运动轨迹将非常缓慢；<br>  如果φ很大，则微粒位置变化非常快；<br>  实验表明，当φ=4.1（通常c1=2.0，c2=2.0）时，具有很好的收敛效果。</li>
+<li><strong>最大速度$v_{max}$</strong><br>  决定粒子在一个循环中最大的移动距离，通常设定为粒子的范围宽度。</li>
+<li><strong>粒子数</strong><br>  一般取20～40，对较难或特定类别的问题可以取100～200。</li>
+</ul>
+<h1 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h1><p>PSO算法思想很简单，先初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置，当最大循环数以及最小错误要求停止。<br><img src="/2019/05/20/pso/1.png" alt="suanfa"></p>
+<h1 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h1><p>例子：$f(x)=x_1^2+x_2^2 \qquad x_1,x_2 \in[-10,10]$，求解最小值</p>
+<ol>
+<li>先建立一个PSO类，我们所要做的步骤，分别是设置参数，初始化种群，设置目标函数，进行迭代更新粒子位置<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class PSO():</span><br><span class="line">    # ----------------------初始化种群-------------------------</span><br><span class="line">    def __init__(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    #  ----------------------目标函数---------------------------</span><br><span class="line">    def function(self, x):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    # ----------------------更新粒子位置------------------------</span><br><span class="line">    def iterator(self):</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure></li>
+<li>初始化参数<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def __init__(self, pN, max_steps, dim=2, bound=[-10, 10], v_max=2, w=0.6, c1=2, c2=2):</span><br><span class="line">    self.pN = pN</span><br><span class="line">    self.dim = dim</span><br><span class="line">    self.steps = max_steps</span><br><span class="line"></span><br><span class="line">    self.w = w</span><br><span class="line">    self.c1 = c1</span><br><span class="line">    self.c2 = c2</span><br><span class="line">    self.x_bound = bound</span><br><span class="line"></span><br><span class="line">    self.x = np.random.uniform(self.x_bound[0], self.x_bound[1], (self.pN, self.dim))</span><br><span class="line">    self.v = np.random.rand(self.pN, self.dim) * v_max</span><br><span class="line">    self.pbest = self.x  # 个体的最佳位置</span><br><span class="line">    fitness = self.function(self.x)</span><br><span class="line">    self.gbest = self.x[np.argmin(fitness)]  # 全局最佳位置</span><br><span class="line">    self.p_fit = fitness  # 每个个体最佳适应值</span><br><span class="line">    self.fit = np.max(fitness)  # 全局最佳适应值</span><br></pre></td></tr></table></figure></li>
+<li>设置目标函数<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def function(self, x):</span><br><span class="line">    return np.sum(np.square(x), axis=1)</span><br></pre></td></tr></table></figure></li>
+<li>更新粒子位置<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def iterator(self):</span><br><span class="line">    for step in range(self.steps):</span><br><span class="line">        # self.g_fit[step] = self.fit</span><br><span class="line">        r1 = np.random.rand(self.pN, self.dim)</span><br><span class="line">        r2 = np.random.rand(self.pN, self.dim)</span><br><span class="line">        self.v = self.w * self.v + self.c1 * r1 * (self.pbest - self.x) + self.c2 * r2 * (self.gbest - self.x)</span><br><span class="line">        self.x = self.v + self.x</span><br><span class="line">        fitness = self.function(self.x)</span><br><span class="line"></span><br><span class="line">        plt.clf()</span><br><span class="line">        plt.scatter(self.x[:, 0], self.x[:, 1], c=&#x27;k&#x27;)</span><br><span class="line">        plt.scatter(self.gbest[0], self.gbest[1], c=&#x27;r&#x27;)</span><br><span class="line">        plt.xlim(self.x_bound[0], self.x_bound[1])</span><br><span class="line">        plt.ylim(self.x_bound[0], self.x_bound[1])</span><br><span class="line">        plt.pause(0.01)</span><br><span class="line"></span><br><span class="line">        update = np.greater(self.p_fit, fitness)</span><br><span class="line">        self.pbest[update] = self.x[update]</span><br><span class="line">        self.p_fit[update] = fitness[update]</span><br><span class="line">        if np.min(fitness) &lt; self.fit:</span><br><span class="line">            self.gbest = self.x[np.argmin(fitness)]</span><br><span class="line">            self.fit = np.min(fitness)</span><br></pre></td></tr></table></figure>
+最后进行一个测试<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    pso = PSO(<span class="number">100</span>, <span class="number">100</span>, <span class="number">2</span>)</span><br><span class="line">    pso.iterator()</span><br><span class="line">    pso.show()</span><br></pre></td></tr></table></figure>
+<img src="/2019/05/20/pso/2.png" alt="result"><blockquote>
+<p>粒子群算法是对现实中规律的总结和应用，具体怎么使用还要看我们遇到的问题，和对问题的理解</p>
+</blockquote>
+</li>
+</ol>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PSO</span>():</span></span><br><span class="line">    <span class="comment"># ----------------------初始化种群-------------------------</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, pN, max_steps, dim=<span class="number">2</span>, bound=[-<span class="number">10</span>, <span class="number">10</span>], v_max=<span class="number">1</span>, w=<span class="number">0.6</span>, c1=<span class="number">2</span>, c2=<span class="number">2</span></span>):</span></span><br><span class="line">        self.pN = pN</span><br><span class="line">        self.dim = dim</span><br><span class="line">        self.steps = max_steps</span><br><span class="line"></span><br><span class="line">        self.w = w</span><br><span class="line">        self.c1 = c1</span><br><span class="line">        self.c2 = c2</span><br><span class="line">        self.x_bound = bound</span><br><span class="line"></span><br><span class="line">        self.x = np.random.uniform(self.x_bound[<span class="number">0</span>], self.x_bound[<span class="number">1</span>], (self.pN, self.dim))</span><br><span class="line">        self.v = np.random.rand(self.pN, self.dim) * v_max</span><br><span class="line">        self.pbest = self.x  <span class="comment"># 个体的最佳位置</span></span><br><span class="line">        fitness = self.function(self.x)</span><br><span class="line">        self.gbest = self.x[np.argmin(fitness)]  <span class="comment"># 全局最佳位置</span></span><br><span class="line">        self.p_fit = fitness  <span class="comment"># 每个个体最佳适应值</span></span><br><span class="line">        self.fit = np.<span class="built_in">max</span>(fitness)  <span class="comment"># 全局最佳适应值</span></span><br><span class="line">        <span class="comment"># self.g_fit = np.zeros((self.steps,1))</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#  ----------------------目标函数---------------------------</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">function</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        <span class="keyword">return</span> np.<span class="built_in">sum</span>(np.square(x), axis=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ----------------------更新粒子位置------------------------</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">iterator</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> step <span class="keyword">in</span> <span class="built_in">range</span>(self.steps):</span><br><span class="line">            <span class="comment"># self.g_fit[step] = self.fit</span></span><br><span class="line">            r1 = np.random.rand(self.pN, self.dim)</span><br><span class="line">            r2 = np.random.rand(self.pN, self.dim)</span><br><span class="line">            self.v = self.w * self.v + self.c1 * r1 * (self.pbest - self.x) + self.c2 * r2 * (self.gbest - self.x)</span><br><span class="line">            self.x = self.v + self.x</span><br><span class="line">            fitness = self.function(self.x)</span><br><span class="line"></span><br><span class="line">            plt.clf()</span><br><span class="line">            plt.scatter(self.x[:, <span class="number">0</span>], self.x[:, <span class="number">1</span>], c=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">            plt.scatter(self.gbest[<span class="number">0</span>], self.gbest[<span class="number">1</span>], c=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">            plt.xlim(self.x_bound[<span class="number">0</span>], self.x_bound[<span class="number">1</span>])</span><br><span class="line">            plt.ylim(self.x_bound[<span class="number">0</span>], self.x_bound[<span class="number">1</span>])</span><br><span class="line">            plt.pause(<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line">            update = np.greater(self.p_fit, fitness)</span><br><span class="line">            self.pbest[update] = self.x[update]</span><br><span class="line">            self.p_fit[update] = fitness[update]</span><br><span class="line">            <span class="keyword">if</span> np.<span class="built_in">min</span>(fitness) &lt; self.fit:</span><br><span class="line">                self.gbest = self.x[np.argmin(fitness)]</span><br><span class="line">                self.fit = np.<span class="built_in">min</span>(fitness)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;最佳位置：&quot;</span>, self.gbest)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;最优解：&quot;</span>, self.fit)</span><br><span class="line">        plt.show()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    pso = PSO(<span class="number">100</span>, <span class="number">100</span>, <span class="number">2</span>)</span><br><span class="line">    pso.iterator()</span><br><span class="line">    pso.show()</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>PSO</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Python|PyTorch入门教程</title>
+    <url>/2020/07/08/pytorch/</url>
+    <content><![CDATA[<p><strong>PyTorch使用心得</strong><br><span id="more"></span></p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>进入<a href="https://pytorch.org/get-started/locally/">PyTorch官网</a>，按照提示选择<br><img src="/2020/07/08/pytorch/1.png" alt="1"></p>
+<blockquote>
+<p>这里</p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>深度学习</tag>
+        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -457,48 +499,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Python|粒子群算法实现</title>
-    <url>/2019/05/20/pso/</url>
-    <content><![CDATA[<p><strong>粒子群算法，也称粒子群优化算法或鸟群觅食算法（Particle Swarm Optimization），缩写为PSO</strong><br><span id="more"></span></p>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>粒子群算法（PSO）是模拟群体智能所建立起来的一种优化算法，主要用于解决最优化问题。基本思想是通过群体中个体之间的协作和信息共享来寻找最优解</p>
-<p>算法是模拟鸟群或蜂群的觅食行为。假设这样一个问题：一群鸟在随机的搜索食物，在一块区域里只有一块食物，所有的鸟都不知道食物在哪。但是它们知道自己的当前位置距离食物有多远。那么这群鸟找到食物的最优策略就是搜寻目前离食物最近的鸟的周围区域。</p>
-<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>粒子群算法就是对上面问题的一个抽象。</p>
-<ul>
-<li>每个鸟抽象为一个无质量，无体积的“粒子”</li>
-<li>每个粒子有一个适应度函数以模拟每只鸟与食物的距离</li>
-<li>每个粒子有一个速度决定它的飞行方向和距离，初始值可以随机确定</li>
-<li>每一次单位时间的飞行后，所有粒子分享信息，下一步将飞向自身最佳位置和全局最优位置的加权中心</li>
-</ul>
-<p>初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置。</p>
-<p>举个例子，假设在D维搜索空间中，有m个粒子<br>其中第i个粒子的位置为矢量，记$\vec{x}_i=(x_{i1},x_{i2},\ldots,x_{iD})$<br>其飞翔速度也是一个矢量，记$\vec{v}_i=(v_{i1},v_{i2},\ldots,v_{iD})$<br>第i个粒子搜索到的最优位置为$\vec{p}_i=(p_{i1},p_{i2},\ldots,p_{iD})$<br>整个粒子群搜索到的最优位置为$\vec{p}_{gbest}=(p_{gbest1},p_{gbest2},\ldots,p_{gbestD})$</p>
-<p><strong>第i个粒子的位置和速度更新为</strong><br>$v_{id}^{k+1}=wv_{id}^{k}+c_1rand()(p_{id}-x_{id}^k)+c_2rand()(p_{gbest}-x_{id}^k)$<br>$x_{id}^{k+1}=x_{id}^{k}+v_{id}^{k} \qquad i=1,2,\ldots,m \quad d=1,2,\ldots,D$<br>其中，$w$称为惯性权重;$c_1$和$c_2$为两个正常系数，称为加速因子;$rand()$为(0,1)之间的随机数;$v_{id}^{k}$限制在一个最大速度$v_{max}$内。</p>
-<p><strong>简单解释一下：</strong></p>
-<ul>
-<li><strong>惯性权重$w$</strong><br>   使粒子保持运动惯性，使其有扩展搜索空间的趋势，有能力探索新的区域。<br>   表示微粒对当前自身运动状态的信任，依据自身的速度进行惯性运动。<br>   较大的w有利于跳出局部极值，而较小的w有利于算法收敛。</li>
-<li><strong>加速常数$c_1$和$c_2$</strong><br>  将c1和c2统一为一个控制参数，φ= c1+c2<br>  如果φ很小，粒子群运动轨迹将非常缓慢；<br>  如果φ很大，则微粒位置变化非常快；<br>  实验表明，当φ=4.1（通常c1=2.0，c2=2.0）时，具有很好的收敛效果。</li>
-<li><strong>最大速度$v_{max}$</strong><br>  决定粒子在一个循环中最大的移动距离，通常设定为粒子的范围宽度。</li>
-<li><strong>粒子数</strong><br>  一般取20～40，对较难或特定类别的问题可以取100～200。</li>
-</ul>
-<h1 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h1><p>PSO算法思想很简单，先初始化为一群随机粒子，通过迭代找到最优。每次迭代中，粒子通过跟踪“个体极值（pbest）”和“全局极值(gbest)”来更新自己的位置，当最大循环数以及最小错误要求停止。<br><img src="/2019/05/20/pso/1.png" alt="suanfa"></p>
-<h1 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h1><p>例子：$f(x)=x_1^2+x_2^2 \qquad x_1,x_2 \in[-10,10]$，求解最小值</p>
-<ol>
-<li>先建立一个PSO类，我们所要做的步骤，分别是设置参数，初始化种群，设置目标函数，进行迭代更新粒子位置<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">class PSO():</span><br><span class="line">    # ----------------------初始化种群-------------------------</span><br><span class="line">    def __init__(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    #  ----------------------目标函数---------------------------</span><br><span class="line">    def function(self, x):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">    # ----------------------更新粒子位置------------------------</span><br><span class="line">    def iterator(self):</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure></li>
-<li>初始化参数<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def __init__(self, pN, max_steps, dim=2, bound=[-10, 10], v_max=2, w=0.6, c1=2, c2=2):</span><br><span class="line">    self.pN = pN</span><br><span class="line">    self.dim = dim</span><br><span class="line">    self.steps = max_steps</span><br><span class="line"></span><br><span class="line">    self.w = w</span><br><span class="line">    self.c1 = c1</span><br><span class="line">    self.c2 = c2</span><br><span class="line">    self.x_bound = bound</span><br><span class="line"></span><br><span class="line">    self.x = np.random.uniform(self.x_bound[0], self.x_bound[1], (self.pN, self.dim))</span><br><span class="line">    self.v = np.random.rand(self.pN, self.dim) * v_max</span><br><span class="line">    self.pbest = self.x  # 个体的最佳位置</span><br><span class="line">    fitness = self.function(self.x)</span><br><span class="line">    self.gbest = self.x[np.argmin(fitness)]  # 全局最佳位置</span><br><span class="line">    self.p_fit = fitness  # 每个个体最佳适应值</span><br><span class="line">    self.fit = np.max(fitness)  # 全局最佳适应值</span><br></pre></td></tr></table></figure></li>
-<li>设置目标函数<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def function(self, x):</span><br><span class="line">    return np.sum(np.square(x), axis=1)</span><br></pre></td></tr></table></figure></li>
-<li>更新粒子位置<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">def iterator(self):</span><br><span class="line">    for step in range(self.steps):</span><br><span class="line">        # self.g_fit[step] = self.fit</span><br><span class="line">        r1 = np.random.rand(self.pN, self.dim)</span><br><span class="line">        r2 = np.random.rand(self.pN, self.dim)</span><br><span class="line">        self.v = self.w * self.v + self.c1 * r1 * (self.pbest - self.x) + self.c2 * r2 * (self.gbest - self.x)</span><br><span class="line">        self.x = self.v + self.x</span><br><span class="line">        fitness = self.function(self.x)</span><br><span class="line"></span><br><span class="line">        plt.clf()</span><br><span class="line">        plt.scatter(self.x[:, 0], self.x[:, 1], c=&#x27;k&#x27;)</span><br><span class="line">        plt.scatter(self.gbest[0], self.gbest[1], c=&#x27;r&#x27;)</span><br><span class="line">        plt.xlim(self.x_bound[0], self.x_bound[1])</span><br><span class="line">        plt.ylim(self.x_bound[0], self.x_bound[1])</span><br><span class="line">        plt.pause(0.01)</span><br><span class="line"></span><br><span class="line">        update = np.greater(self.p_fit, fitness)</span><br><span class="line">        self.pbest[update] = self.x[update]</span><br><span class="line">        self.p_fit[update] = fitness[update]</span><br><span class="line">        if np.min(fitness) &lt; self.fit:</span><br><span class="line">            self.gbest = self.x[np.argmin(fitness)]</span><br><span class="line">            self.fit = np.min(fitness)</span><br></pre></td></tr></table></figure>
-最后进行一个测试<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    pso = PSO(<span class="number">100</span>, <span class="number">100</span>, <span class="number">2</span>)</span><br><span class="line">    pso.iterator()</span><br><span class="line">    pso.show()</span><br></pre></td></tr></table></figure>
-<img src="/2019/05/20/pso/2.png" alt="result"><blockquote>
-<p>粒子群算法是对现实中规律的总结和应用，具体怎么使用还要看我们遇到的问题，和对问题的理解</p>
-</blockquote>
-</li>
-</ol>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PSO</span>():</span></span><br><span class="line">    <span class="comment"># ----------------------初始化种群-------------------------</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, pN, max_steps, dim=<span class="number">2</span>, bound=[-<span class="number">10</span>, <span class="number">10</span>], v_max=<span class="number">1</span>, w=<span class="number">0.6</span>, c1=<span class="number">2</span>, c2=<span class="number">2</span></span>):</span></span><br><span class="line">        self.pN = pN</span><br><span class="line">        self.dim = dim</span><br><span class="line">        self.steps = max_steps</span><br><span class="line"></span><br><span class="line">        self.w = w</span><br><span class="line">        self.c1 = c1</span><br><span class="line">        self.c2 = c2</span><br><span class="line">        self.x_bound = bound</span><br><span class="line"></span><br><span class="line">        self.x = np.random.uniform(self.x_bound[<span class="number">0</span>], self.x_bound[<span class="number">1</span>], (self.pN, self.dim))</span><br><span class="line">        self.v = np.random.rand(self.pN, self.dim) * v_max</span><br><span class="line">        self.pbest = self.x  <span class="comment"># 个体的最佳位置</span></span><br><span class="line">        fitness = self.function(self.x)</span><br><span class="line">        self.gbest = self.x[np.argmin(fitness)]  <span class="comment"># 全局最佳位置</span></span><br><span class="line">        self.p_fit = fitness  <span class="comment"># 每个个体最佳适应值</span></span><br><span class="line">        self.fit = np.<span class="built_in">max</span>(fitness)  <span class="comment"># 全局最佳适应值</span></span><br><span class="line">        <span class="comment"># self.g_fit = np.zeros((self.steps,1))</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#  ----------------------目标函数---------------------------</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">function</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        <span class="keyword">return</span> np.<span class="built_in">sum</span>(np.square(x), axis=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ----------------------更新粒子位置------------------------</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">iterator</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> step <span class="keyword">in</span> <span class="built_in">range</span>(self.steps):</span><br><span class="line">            <span class="comment"># self.g_fit[step] = self.fit</span></span><br><span class="line">            r1 = np.random.rand(self.pN, self.dim)</span><br><span class="line">            r2 = np.random.rand(self.pN, self.dim)</span><br><span class="line">            self.v = self.w * self.v + self.c1 * r1 * (self.pbest - self.x) + self.c2 * r2 * (self.gbest - self.x)</span><br><span class="line">            self.x = self.v + self.x</span><br><span class="line">            fitness = self.function(self.x)</span><br><span class="line"></span><br><span class="line">            plt.clf()</span><br><span class="line">            plt.scatter(self.x[:, <span class="number">0</span>], self.x[:, <span class="number">1</span>], c=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">            plt.scatter(self.gbest[<span class="number">0</span>], self.gbest[<span class="number">1</span>], c=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">            plt.xlim(self.x_bound[<span class="number">0</span>], self.x_bound[<span class="number">1</span>])</span><br><span class="line">            plt.ylim(self.x_bound[<span class="number">0</span>], self.x_bound[<span class="number">1</span>])</span><br><span class="line">            plt.pause(<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line">            update = np.greater(self.p_fit, fitness)</span><br><span class="line">            self.pbest[update] = self.x[update]</span><br><span class="line">            self.p_fit[update] = fitness[update]</span><br><span class="line">            <span class="keyword">if</span> np.<span class="built_in">min</span>(fitness) &lt; self.fit:</span><br><span class="line">                self.gbest = self.x[np.argmin(fitness)]</span><br><span class="line">                self.fit = np.<span class="built_in">min</span>(fitness)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;最佳位置：&quot;</span>, self.gbest)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;最优解：&quot;</span>, self.fit)</span><br><span class="line">        plt.show()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    pso = PSO(<span class="number">100</span>, <span class="number">100</span>, <span class="number">2</span>)</span><br><span class="line">    pso.iterator()</span><br><span class="line">    pso.show()</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>PSO</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Python|一行代码生成二维码</title>
     <url>/2020/02/28/%E4%BA%8C%E7%BB%B4%E7%A0%81/</url>
     <content><![CDATA[<p><strong>简单生成二维码</strong><br><span id="more"></span></p>
@@ -554,6 +554,39 @@
       </tags>
   </entry>
   <entry>
+    <title>NOTE|操作系统</title>
+    <url>/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</url>
+    <content><![CDATA[<p><strong>操作系统复习笔记</strong><br><span id="more"></span></p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="操作系统的特征"><a href="#操作系统的特征" class="headerlink" title="操作系统的特征"></a>操作系统的特征</h2><h3 id="1-并发性"><a href="#1-并发性" class="headerlink" title="1.并发性"></a>1.并发性</h3><ul>
+<li><strong>并行性</strong>：两个或多个事件在同一时刻发生。</li>
+<li><strong>并发性</strong>：两个或多个事件在同一时间间隔内发生。<h3 id="2-共享性"><a href="#2-共享性" class="headerlink" title="2.共享性"></a>2.共享性</h3></li>
+</ul>
+<blockquote>
+<p>并发性和共享性是操作系统最基本的特征</p>
+</blockquote>
+<h3 id="3-虚拟性"><a href="#3-虚拟性" class="headerlink" title="3.虚拟性"></a>3.虚拟性</h3><h3 id="4-异步性"><a href="#4-异步性" class="headerlink" title="4.异步性"></a>4.异步性</h3><h2 id="操作系统的基本功能"><a href="#操作系统的基本功能" class="headerlink" title="操作系统的基本功能"></a>操作系统的基本功能</h2><h3 id="1-处理器管理"><a href="#1-处理器管理" class="headerlink" title="1. 处理器管理"></a>1. 处理器管理</h3><h3 id="2-存储器管理"><a href="#2-存储器管理" class="headerlink" title="2. 存储器管理"></a>2. 存储器管理</h3><h3 id="3-设备管理"><a href="#3-设备管理" class="headerlink" title="3. 设备管理"></a>3. 设备管理</h3><h3 id="4-文件管理"><a href="#4-文件管理" class="headerlink" title="4. 文件管理"></a>4. 文件管理</h3><h3 id="5-用户接口"><a href="#5-用户接口" class="headerlink" title="5. 用户接口"></a>5. 用户接口</h3><h2 id="操作系统的体系结构"><a href="#操作系统的体系结构" class="headerlink" title="操作系统的体系结构"></a>操作系统的体系结构</h2><h3 id="1-模块组合结构"><a href="#1-模块组合结构" class="headerlink" title="1.模块组合结构"></a>1.模块组合结构</h3><ul>
+<li>优点：结构紧密，接口简单，系统效率较高</li>
+<li>缺点：易导致系统结构不清晰，可扩展性差，可适应性差<blockquote>
+<p>适用于系统小，模块少，使用环境比较稳定的系统</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="2-层次结构"><a href="#2-层次结构" class="headerlink" title="2.层次结构"></a>2.层次结构</h3><ul>
+<li>优点：结构清晰，可读性，可适应性及可靠性得到了增强，便于修改和扩充</li>
+<li>缺点：需要考虑如何有效的分层<h3 id="3-微内核结构"><a href="#3-微内核结构" class="headerlink" title="3.微内核结构"></a>3.微内核结构</h3></li>
+<li>优点：可靠性好，灵活性高，便于维护</li>
+<li>缺点：操作系统效率不高<blockquote>
+<p>适合分布式处理的计算环境</p>
+</blockquote>
+</li>
+</ul>
+<h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1><h2 id="进程与线程"><a href="#进程与线程" class="headerlink" title="进程与线程"></a>进程与线程</h2>]]></content>
+      <tags>
+        <tag>CS</tag>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JAVA|简单的Web Service</title>
     <url>/2019/05/16/%E5%88%86%E5%B8%83%E5%BC%8F4/</url>
     <content><![CDATA[<p><strong>编写Web Service客户端程序。</strong><br><span id="more"></span></p>
@@ -601,36 +634,55 @@
       </tags>
   </entry>
   <entry>
-    <title>NOTE|操作系统</title>
-    <url>/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</url>
-    <content><![CDATA[<p><strong>操作系统复习笔记</strong><br><span id="more"></span></p>
-<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="操作系统的特征"><a href="#操作系统的特征" class="headerlink" title="操作系统的特征"></a>操作系统的特征</h2><h3 id="1-并发性"><a href="#1-并发性" class="headerlink" title="1.并发性"></a>1.并发性</h3><ul>
-<li><strong>并行性</strong>：两个或多个事件在同一时刻发生。</li>
-<li><strong>并发性</strong>：两个或多个事件在同一时间间隔内发生。<h3 id="2-共享性"><a href="#2-共享性" class="headerlink" title="2.共享性"></a>2.共享性</h3></li>
-</ul>
+    <title>NOTE|思想政治理论</title>
+    <url>/2021/05/07/%E6%94%BF%E6%B2%BB/</url>
+    <content><![CDATA[<p><strong>政治学习笔记</strong><br><span id="more"></span></p>
+<style>
+
+.t1 {
+  display: block;
+  line-height: 1.4;
+  text-align: justify;
+  text-indent: 2em;
+}
+</style>
+
+<h1 id="第一章-马克思主义是关于无产阶级和人类解放的科学"><a href="#第一章-马克思主义是关于无产阶级和人类解放的科学" class="headerlink" title="第一章 马克思主义是关于无产阶级和人类解放的科学"></a>第一章 马克思主义是关于无产阶级和人类解放的科学</h1><h2 id="知识点1-什么是马克思主义"><a href="#知识点1-什么是马克思主义" class="headerlink" title="知识点1 什么是马克思主义"></a>知识点1 什么是马克思主义</h2><p><strong>创立人：</strong></p>
+<p class="t1">马克思、恩格斯创立并为后继者所不断发展的科学理论体系</p>
+
+<p><strong>研究对象：</strong></p>
+<p></p><p class="t1">由自然、社会和人类思维发展一般规律的学说</p>
+<p><strong>主要内容：</strong></p>
+<p></p><p class="t1">关于社会主义必然代替资本主义、最终实现共产主义的学说</p>
+<p><strong>奋斗目标：</strong></p>
+<p></p><p class="t1">关于无产阶级解放、全人类解放和每个人自由而又全面的发展的学说</p>
+<p><strong>现实意义：</strong></p>
+<p></p><p class="t1">指引人民创造美好生活的行动指南</p>
 <blockquote>
-<p>并发性和共享性是操作系统最基本的特征</p>
+<p><strong>三个基本组成部分：</strong><br>马克思主义哲学、马克思主义政治经济学、科学社会主义</p>
 </blockquote>
-<h3 id="3-虚拟性"><a href="#3-虚拟性" class="headerlink" title="3.虚拟性"></a>3.虚拟性</h3><h3 id="4-异步性"><a href="#4-异步性" class="headerlink" title="4.异步性"></a>4.异步性</h3><h2 id="操作系统的基本功能"><a href="#操作系统的基本功能" class="headerlink" title="操作系统的基本功能"></a>操作系统的基本功能</h2><h3 id="1-处理器管理"><a href="#1-处理器管理" class="headerlink" title="1. 处理器管理"></a>1. 处理器管理</h3><h3 id="2-存储器管理"><a href="#2-存储器管理" class="headerlink" title="2. 存储器管理"></a>2. 存储器管理</h3><h3 id="3-设备管理"><a href="#3-设备管理" class="headerlink" title="3. 设备管理"></a>3. 设备管理</h3><h3 id="4-文件管理"><a href="#4-文件管理" class="headerlink" title="4. 文件管理"></a>4. 文件管理</h3><h3 id="5-用户接口"><a href="#5-用户接口" class="headerlink" title="5. 用户接口"></a>5. 用户接口</h3><h2 id="操作系统的体系结构"><a href="#操作系统的体系结构" class="headerlink" title="操作系统的体系结构"></a>操作系统的体系结构</h2><h3 id="1-模块组合结构"><a href="#1-模块组合结构" class="headerlink" title="1.模块组合结构"></a>1.模块组合结构</h3><ul>
-<li>优点：结构紧密，接口简单，系统效率较高</li>
-<li>缺点：易导致系统结构不清晰，可扩展性差，可适应性差<blockquote>
-<p>适用于系统小，模块少，使用环境比较稳定的系统</p>
-</blockquote>
+<h2 id="知识点2-马克思主义的产生"><a href="#知识点2-马克思主义的产生" class="headerlink" title="知识点2 马克思主义的产生"></a>知识点2 马克思主义的产生</h2><p>社会根源：<br>资本主义经济的发展为马克思主义的产生提供了经济、社会历史条件</p>
+<p>阶级基础：<br>无产阶级反抗资产阶级剥削和压迫的斗争中，逐步走向自觉，并迫切渴望科学的理论指导</p>
+<p>直接理论来源：<br>德国古典哲学、英国古典政治经济学、英法空想社会主义</p>
+<p>自然科学前提：<br>细胞学说、能量守恒与转化定律、生物进化论</p>
+<h2 id="知识点3-马克思主义的发展"><a href="#知识点3-马克思主义的发展" class="headerlink" title="知识点3 马克思主义的发展"></a>知识点3 马克思主义的发展</h2><ol>
+<li><p>马克思主义在俄国的发展</p>
 </li>
-</ul>
-<h3 id="2-层次结构"><a href="#2-层次结构" class="headerlink" title="2.层次结构"></a>2.层次结构</h3><ul>
-<li>优点：结构清晰，可读性，可适应性及可靠性得到了增强，便于修改和扩充</li>
-<li>缺点：需要考虑如何有效的分层<h3 id="3-微内核结构"><a href="#3-微内核结构" class="headerlink" title="3.微内核结构"></a>3.微内核结构</h3></li>
-<li>优点：可靠性好，灵活性高，便于维护</li>
-<li>缺点：操作系统效率不高<blockquote>
-<p>适合分布式处理的计算环境</p>
-</blockquote>
+<li><p>马克思列宁主义在中国的发展</p>
 </li>
-</ul>
-<h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1><h2 id="进程与线程"><a href="#进程与线程" class="headerlink" title="进程与线程"></a>进程与线程</h2>]]></content>
+</ol>
+<h2 id="知识点4-马克思主义的鲜明特征"><a href="#知识点4-马克思主义的鲜明特征" class="headerlink" title="知识点4 马克思主义的鲜明特征"></a>知识点4 马克思主义的鲜明特征</h2><p>科学性：<br>对自然、社会和人类思维发展本质和规律的正确认识</p>
+<p>革命性：<br>彻底的批判精神和鲜明的无产阶级立场</p>
+<p>实践性：<br>从实践中来，到实践中去，在实践中接受检验，并随实践而不断发展的学说</p>
+<p>人民性：<br>人民至上的政治立场</p>
+<p>发展开放性：<br>不断发展的学说，具有与时俱进的理论品质</p>
+<h1 id="第二章：世界的物质性及其发展规律"><a href="#第二章：世界的物质性及其发展规律" class="headerlink" title="第二章：世界的物质性及其发展规律"></a>第二章：世界的物质性及其发展规律</h1><h2 id="世界多样性与物质统一性"><a href="#世界多样性与物质统一性" class="headerlink" title="世界多样性与物质统一性"></a>世界多样性与物质统一性</h2><h3 id="哲学基本问题及其内容"><a href="#哲学基本问题及其内容" class="headerlink" title="哲学基本问题及其内容"></a>哲学基本问题及其内容</h3><blockquote>
+<p>恩格斯<strong>第一次</strong>明确指出“全部哲学，特别是近代哲学的重大的基本问题，是思维和存在的关系问题。”</p>
+</blockquote>
+<p>$哲学基本问题的两个方面\left\{\begin{array}{l}{物质和意识何者为第一性\left\{\begin{array}{l}{唯物主义\left\{\begin{array}{l}{古代朴素唯物主义}\\{近代形而上学唯物主义}\\{现代辩证唯物主义}\end{array}\right.}\\{唯心主义\left\{\begin{array}{l}{主观唯心}\\{客观唯心}\end{array}\right.}\end{array}\right.} \\ {物质和意识是否具有同一性\left\{\begin{array}{l}{可知论}\\{不可知论}\end{array}\right.}\end{array}\right.$</p>
+<h3 id="物质与意识的辩证关系"><a href="#物质与意识的辩证关系" class="headerlink" title="物质与意识的辩证关系"></a>物质与意识的辩证关系</h3><h3 id="世界物质统一性原理及其意义"><a href="#世界物质统一性原理及其意义" class="headerlink" title="世界物质统一性原理及其意义"></a>世界物质统一性原理及其意义</h3>]]></content>
       <tags>
-        <tag>CS</tag>
-        <tag>操作系统</tag>
+        <tag>NOTE</tag>
       </tags>
   </entry>
   <entry>
@@ -688,55 +740,39 @@
       </tags>
   </entry>
   <entry>
-    <title>NOTE|思想政治理论</title>
-    <url>/2021/05/07/%E6%94%BF%E6%B2%BB/</url>
-    <content><![CDATA[<p><strong>政治学习笔记</strong><br><span id="more"></span></p>
-<style>
-
-.t1 {
-  display: block;
-  line-height: 1.4;
-  text-align: justify;
-  text-indent: 2em;
-}
-</style>
-
-<h1 id="第一章-马克思主义是关于无产阶级和人类解放的科学"><a href="#第一章-马克思主义是关于无产阶级和人类解放的科学" class="headerlink" title="第一章 马克思主义是关于无产阶级和人类解放的科学"></a>第一章 马克思主义是关于无产阶级和人类解放的科学</h1><h2 id="知识点1-什么是马克思主义"><a href="#知识点1-什么是马克思主义" class="headerlink" title="知识点1 什么是马克思主义"></a>知识点1 什么是马克思主义</h2><p><strong>创立人：</strong></p>
-<p class="t1">马克思、恩格斯创立并为后继者所不断发展的科学理论体系</p>
-
-<p><strong>研究对象：</strong></p>
-<p></p><p class="t1">由自然、社会和人类思维发展一般规律的学说</p>
-<p><strong>主要内容：</strong></p>
-<p></p><p class="t1">关于社会主义必然代替资本主义、最终实现共产主义的学说</p>
-<p><strong>奋斗目标：</strong></p>
-<p></p><p class="t1">关于无产阶级解放、全人类解放和每个人自由而又全面的发展的学说</p>
-<p><strong>现实意义：</strong></p>
-<p></p><p class="t1">指引人民创造美好生活的行动指南</p>
-<blockquote>
-<p><strong>三个基本组成部分：</strong><br>马克思主义哲学、马克思主义政治经济学、科学社会主义</p>
-</blockquote>
-<h2 id="知识点2-马克思主义的产生"><a href="#知识点2-马克思主义的产生" class="headerlink" title="知识点2 马克思主义的产生"></a>知识点2 马克思主义的产生</h2><p>社会根源：<br>资本主义经济的发展为马克思主义的产生提供了经济、社会历史条件</p>
-<p>阶级基础：<br>无产阶级反抗资产阶级剥削和压迫的斗争中，逐步走向自觉，并迫切渴望科学的理论指导</p>
-<p>直接理论来源：<br>德国古典哲学、英国古典政治经济学、英法空想社会主义</p>
-<p>自然科学前提：<br>细胞学说、能量守恒与转化定律、生物进化论</p>
-<h2 id="知识点3-马克思主义的发展"><a href="#知识点3-马克思主义的发展" class="headerlink" title="知识点3 马克思主义的发展"></a>知识点3 马克思主义的发展</h2><ol>
-<li><p>马克思主义在俄国的发展</p>
-</li>
-<li><p>马克思列宁主义在中国的发展</p>
-</li>
+    <title>NOTE|数据结构</title>
+    <url>/2019/08/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</url>
+    <content><![CDATA[<p><strong>数据结构复习笔记</strong><br><span id="more"></span></p>
+<h1 id="什么是数据结构"><a href="#什么是数据结构" class="headerlink" title="什么是数据结构"></a>什么是数据结构</h1><p><strong>数据结构</strong>是指相互之间存在一种或多种<strong>特定关系</strong>的<strong>数据元素集合</strong><br>（结构指的是数据元素相互之间的关系）</p>
+<h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><ol>
+<li>对客观事物的符号描述，能输入到计算机中并被计算机程序处理的符号的总称；</li>
+<li>能被计算机识别、存储和加工处理的信息的载体</li>
 </ol>
-<h2 id="知识点4-马克思主义的鲜明特征"><a href="#知识点4-马克思主义的鲜明特征" class="headerlink" title="知识点4 马克思主义的鲜明特征"></a>知识点4 马克思主义的鲜明特征</h2><p>科学性：<br>对自然、社会和人类思维发展本质和规律的正确认识</p>
-<p>革命性：<br>彻底的批判精神和鲜明的无产阶级立场</p>
-<p>实践性：<br>从实践中来，到实践中去，在实践中接受检验，并随实践而不断发展的学说</p>
-<p>人民性：<br>人民至上的政治立场</p>
-<p>发展开放性：<br>不断发展的学说，具有与时俱进的理论品质</p>
-<h1 id="第二章：世界的物质性及其发展规律"><a href="#第二章：世界的物质性及其发展规律" class="headerlink" title="第二章：世界的物质性及其发展规律"></a>第二章：世界的物质性及其发展规律</h1><h2 id="世界多样性与物质统一性"><a href="#世界多样性与物质统一性" class="headerlink" title="世界多样性与物质统一性"></a>世界多样性与物质统一性</h2><h3 id="哲学基本问题及其内容"><a href="#哲学基本问题及其内容" class="headerlink" title="哲学基本问题及其内容"></a>哲学基本问题及其内容</h3><blockquote>
-<p>恩格斯<strong>第一次</strong>明确指出“全部哲学，特别是近代哲学的重大的基本问题，是思维和存在的关系问题。”</p>
+<h2 id="数据元素"><a href="#数据元素" class="headerlink" title="数据元素"></a>数据元素</h2><p>数据元素是组成数据的基本单位, 是数据集合的个体，在计算机中通常作为一个整体进行考虑和处理。 </p>
+<h2 id="数据项"><a href="#数据项" class="headerlink" title="数据项"></a>数据项</h2><p>一个数据元素可由若干个数据项组成，数据项是数据的不可分割的最小单位。</p>
+<blockquote>
+<p>例：一条书目信息是由书名、作者名、分类等多个数据项组成的</p>
 </blockquote>
-<p>$哲学基本问题的两个方面\left\{\begin{array}{l}{物质和意识何者为第一性\left\{\begin{array}{l}{唯物主义\left\{\begin{array}{l}{古代朴素唯物主义}\\{近代形而上学唯物主义}\\{现代辩证唯物主义}\end{array}\right.}\\{唯心主义\left\{\begin{array}{l}{主观唯心}\\{客观唯心}\end{array}\right.}\end{array}\right.} \\ {物质和意识是否具有同一性\left\{\begin{array}{l}{可知论}\\{不可知论}\end{array}\right.}\end{array}\right.$</p>
-<h3 id="物质与意识的辩证关系"><a href="#物质与意识的辩证关系" class="headerlink" title="物质与意识的辩证关系"></a>物质与意识的辩证关系</h3><h3 id="世界物质统一性原理及其意义"><a href="#世界物质统一性原理及其意义" class="headerlink" title="世界物质统一性原理及其意义"></a>世界物质统一性原理及其意义</h3>]]></content>
+<h1 id="逻辑结构图"><a href="#逻辑结构图" class="headerlink" title="逻辑结构图"></a>逻辑结构图</h1><p>可以将数据结构用图形形象地表示出来,图形中的每个结点对应着一个数据元素,两结点之间的连线对应着关系中的一个序偶。</p>
+<h1 id="数据结构的内容"><a href="#数据结构的内容" class="headerlink" title="数据结构的内容"></a>数据结构的内容</h1><h2 id="逻辑结构"><a href="#逻辑结构" class="headerlink" title="逻辑结构"></a>逻辑结构</h2><p>数据元素之间的关系。逻辑结构可看作是从具体问题抽象出来的数学模型</p>
+<h3 id="线性结构"><a href="#线性结构" class="headerlink" title="线性结构"></a>线性结构</h3><p>所谓线性结构,该结构中的结点之间存在一对一的关系。<strong>其特点</strong>开始结点和终端结点都是惟一的,除了开始结点和终端结点以外,其余结点都有且仅有一个前驱结点,有且仅有一个后继结点。</p>
+<blockquote>
+<p>顺序表就是典型的线性结构。</p>
+<h3 id="非线性结构"><a href="#非线性结构" class="headerlink" title="非线性结构"></a>非线性结构</h3><p>所谓非线性结构,该结构中的结点之间存在一对多或多对多的关系。它又可以细分为树形结构和图形结构两类。</p>
+<h4 id="树形结构"><a href="#树形结构" class="headerlink" title="树形结构"></a>树形结构</h4><p>该结构中的结点之间存在一对多的关系。其特点是每个结点最多只有一个前驱,但可以有多个后继,可以有多个终端结点。非线性结构树形结构简称为树。</p>
+<h4 id="图形结构"><a href="#图形结构" class="headerlink" title="图形结构"></a>图形结构</h4><p>该结构中的结点之间存在多对多的关系。其特点是每个结点的前驱和后继的个数都可以是任意的。因此,可能没有开始结点和终端结点,也可能有多个开始结点、多个终端结点。图形结构简称为图。</p>
+</blockquote>
+<h2 id="存储结构（物理结构）"><a href="#存储结构（物理结构）" class="headerlink" title="存储结构（物理结构）"></a>存储结构（物理结构）</h2><p>在计算机中的存储映象，是逻辑结构在计算机中的实现，它包括数据元素的表示和关系的表示。</p>
+<blockquote>
+<p>链式存储法\<br>缺点：存储空间占用大,无法随机访问\<br>优点：便于修改（插入、删除、移动）</p>
+</blockquote>
+<h1 id="逻辑结构与存储结构的关系"><a href="#逻辑结构与存储结构的关系" class="headerlink" title="逻辑结构与存储结构的关系"></a>逻辑结构与存储结构的关系</h1><p>存储结构是逻辑关系的映象与元素本身的映象。逻辑结构是数据结构的抽象，存储结构是数据结构的实现，两者综合起来建立了数据元素之间的结构关系。 </p>
+<p>数据结构的内容可归纳为三个部分：逻辑结构、存储结构和运算集合。按某种逻辑关系组织起来的一批数据，按一定的映象方式把它存放在计算机的存储器中，并在这些数据上定义了一个运算的集合， 就叫做数据结构。 </p>
+<p><img src="/2019/08/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/1.png" alt="1">法特若</p>
+<h1 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h1>]]></content>
       <tags>
-        <tag>NOTE</tag>
+        <tag>CS</tag>
+        <tag>数据结构</tag>
       </tags>
   </entry>
   <entry>
@@ -778,42 +814,6 @@
       </tags>
   </entry>
   <entry>
-    <title>NOTE|数据结构</title>
-    <url>/2019/08/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</url>
-    <content><![CDATA[<p><strong>数据结构复习笔记</strong><br><span id="more"></span></p>
-<h1 id="什么是数据结构"><a href="#什么是数据结构" class="headerlink" title="什么是数据结构"></a>什么是数据结构</h1><p><strong>数据结构</strong>是指相互之间存在一种或多种<strong>特定关系</strong>的<strong>数据元素集合</strong><br>（结构指的是数据元素相互之间的关系）</p>
-<h2 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h2><ol>
-<li>对客观事物的符号描述，能输入到计算机中并被计算机程序处理的符号的总称；</li>
-<li>能被计算机识别、存储和加工处理的信息的载体</li>
-</ol>
-<h2 id="数据元素"><a href="#数据元素" class="headerlink" title="数据元素"></a>数据元素</h2><p>数据元素是组成数据的基本单位, 是数据集合的个体，在计算机中通常作为一个整体进行考虑和处理。 </p>
-<h2 id="数据项"><a href="#数据项" class="headerlink" title="数据项"></a>数据项</h2><p>一个数据元素可由若干个数据项组成，数据项是数据的不可分割的最小单位。</p>
-<blockquote>
-<p>例：一条书目信息是由书名、作者名、分类等多个数据项组成的</p>
-</blockquote>
-<h1 id="逻辑结构图"><a href="#逻辑结构图" class="headerlink" title="逻辑结构图"></a>逻辑结构图</h1><p>可以将数据结构用图形形象地表示出来,图形中的每个结点对应着一个数据元素,两结点之间的连线对应着关系中的一个序偶。</p>
-<h1 id="数据结构的内容"><a href="#数据结构的内容" class="headerlink" title="数据结构的内容"></a>数据结构的内容</h1><h2 id="逻辑结构"><a href="#逻辑结构" class="headerlink" title="逻辑结构"></a>逻辑结构</h2><p>数据元素之间的关系。逻辑结构可看作是从具体问题抽象出来的数学模型</p>
-<h3 id="线性结构"><a href="#线性结构" class="headerlink" title="线性结构"></a>线性结构</h3><p>所谓线性结构,该结构中的结点之间存在一对一的关系。<strong>其特点</strong>开始结点和终端结点都是惟一的,除了开始结点和终端结点以外,其余结点都有且仅有一个前驱结点,有且仅有一个后继结点。</p>
-<blockquote>
-<p>顺序表就是典型的线性结构。</p>
-<h3 id="非线性结构"><a href="#非线性结构" class="headerlink" title="非线性结构"></a>非线性结构</h3><p>所谓非线性结构,该结构中的结点之间存在一对多或多对多的关系。它又可以细分为树形结构和图形结构两类。</p>
-<h4 id="树形结构"><a href="#树形结构" class="headerlink" title="树形结构"></a>树形结构</h4><p>该结构中的结点之间存在一对多的关系。其特点是每个结点最多只有一个前驱,但可以有多个后继,可以有多个终端结点。非线性结构树形结构简称为树。</p>
-<h4 id="图形结构"><a href="#图形结构" class="headerlink" title="图形结构"></a>图形结构</h4><p>该结构中的结点之间存在多对多的关系。其特点是每个结点的前驱和后继的个数都可以是任意的。因此,可能没有开始结点和终端结点,也可能有多个开始结点、多个终端结点。图形结构简称为图。</p>
-</blockquote>
-<h2 id="存储结构（物理结构）"><a href="#存储结构（物理结构）" class="headerlink" title="存储结构（物理结构）"></a>存储结构（物理结构）</h2><p>在计算机中的存储映象，是逻辑结构在计算机中的实现，它包括数据元素的表示和关系的表示。</p>
-<blockquote>
-<p>链式存储法\<br>缺点：存储空间占用大,无法随机访问\<br>优点：便于修改（插入、删除、移动）</p>
-</blockquote>
-<h1 id="逻辑结构与存储结构的关系"><a href="#逻辑结构与存储结构的关系" class="headerlink" title="逻辑结构与存储结构的关系"></a>逻辑结构与存储结构的关系</h1><p>存储结构是逻辑关系的映象与元素本身的映象。逻辑结构是数据结构的抽象，存储结构是数据结构的实现，两者综合起来建立了数据元素之间的结构关系。 </p>
-<p>数据结构的内容可归纳为三个部分：逻辑结构、存储结构和运算集合。按某种逻辑关系组织起来的一批数据，按一定的映象方式把它存放在计算机的存储器中，并在这些数据上定义了一个运算的集合， 就叫做数据结构。 </p>
-<p><img src="/2019/08/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/1.png" alt="1">法特若</p>
-<h1 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h1>]]></content>
-      <tags>
-        <tag>CS</tag>
-        <tag>数据结构</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>NOTE|《深入理解计算机系统》</title>
     <url>/2021/05/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p><strong>读书笔记</strong><br><span id="more"></span></p>
@@ -821,202 +821,6 @@
       <tags>
         <tag>CS</tag>
         <tag>操作系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>NOTE|网络程序设计</title>
-    <url>/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</url>
-    <content><![CDATA[<p><strong>网络程序设计简单的总结</strong><br><strong>ψ(｀∇´)ψ</strong><br><span id="more"></span></p>
-<h1 id="Linux-编程基础"><a href="#Linux-编程基础" class="headerlink" title="Linux 编程基础"></a>Linux 编程基础</h1><h2 id="C语言编译"><a href="#C语言编译" class="headerlink" title="C语言编译"></a>C语言编译</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gcc hello.c –o hello </span><br></pre></td></tr></table></figure>
-<h2 id="Linux常用网络调试命令"><a href="#Linux常用网络调试命令" class="headerlink" title="Linux常用网络调试命令"></a>Linux常用网络调试命令</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看网络配置（网卡）</span><br><span class="line">ifconfig</span><br><span class="line">查看所有网络连接状态</span><br><span class="line">nestat – a</span><br><span class="line">查看TCP协议网络连接状态</span><br><span class="line">netstat –t</span><br><span class="line">查看网络连接所属进程PID</span><br><span class="line">netstat -p</span><br><span class="line">检查网络是否可达</span><br><span class="line">ping 127.0.0.1 </span><br></pre></td></tr></table></figure>
-<h2 id="Linux操作基础"><a href="#Linux操作基础" class="headerlink" title="Linux操作基础"></a>Linux操作基础</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls 显示当前目录中的内容 </span><br><span class="line">ls －l</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd 切换目录</span><br><span class="line">cd /mnt/usb</span><br><span class="line">cd ..</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir 创建目录</span><br><span class="line">mkdir work</span><br><span class="line">rmdir 删除目录</span><br><span class="line">rmdir work</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cp 复制文件</span><br><span class="line">cp prog1.c prog2.c</span><br><span class="line">cp prog1.c /mnt/usb</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rm 删除文件或目录</span><br><span class="line">rm prog1.c</span><br><span class="line">rm *.*</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mv 移动或改变文件名称</span><br><span class="line">mv prog1.c ..</span><br><span class="line">mv pro1.c prog2.c</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">more命令</span><br><span class="line">ls –l|more 显示画面暂停</span><br><span class="line">more prog1.c 显示文本文件内容</span><br><span class="line">pwd 显示当前所在目录</span><br></pre></td></tr></table></figure>
-<h1 id="基本socket函数"><a href="#基本socket函数" class="headerlink" title="基本socket函数"></a>基本socket函数</h1><h2 id="必须的头文件"><a href="#必须的头文件" class="headerlink" title="必须的头文件"></a>必须的头文件</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-<h2 id="创建网络端点"><a href="#创建网络端点" class="headerlink" title="创建网络端点"></a>创建网络端点</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> sock;</span><br><span class="line"><span class="keyword">if</span>((sock=socket(AF_INET,SOCK_STREAM,<span class="number">0</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>int socket (int family, int type, int protocol)<br>功能：创建socket描述符<br>参数：（P34表2－1描述了可能的参数值）<br>family（协议簇）：AF_INET、AF_UNIX<br>type（类型）：SOCK_STREAM、SOCK_DGRAM、SOCK_RAW<br>protocol（协议）：默认为0<br>返回值：&gt;0－socket描述符， -1－失败， 系统全局变量errno为错误代码</p>
-<h2 id="设置地址"><a href="#设置地址" class="headerlink" title="设置地址"></a>设置地址</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr</span>;</span></span><br><span class="line">bzero(&amp;srvaddr,<span class="keyword">sizeof</span>(srvaddr));</span><br><span class="line">addr.sin_family=AF_INET;</span><br><span class="line">addr.sin_port=htons(<span class="number">1234</span>);</span><br><span class="line"><span class="keyword">if</span>(inet_aton(<span class="string">&quot;127.0.0.1&quot;</span>,srvaddr.sin_addr.s_addr)==<span class="number">-1</span>)&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;addr convert error\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>TCP/IP协议的socket地址<br>常用地址形式（字符串）：“127.0.0.1”<br>地址转换函数:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">inet_aton(<span class="keyword">const</span> <span class="keyword">char</span> *cp,struct in_addr *inp);</span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">inet_ntoa</span><span class="params">(struct in_addr in)</span></span>;</span><br></pre></td></tr></table></figure></p>
-</blockquote>
-<h2 id="绑定服务器地址和端口"><a href="#绑定服务器地址和端口" class="headerlink" title="绑定服务器地址和端口"></a>绑定服务器地址和端口</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>( bind(sockfd,(struct sockaddr *)&amp;addr,<span class="keyword">sizeof</span>(struct sockaddr))==<span class="number">-1</span>)&#123;		</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;bind error\n&quot;</span>);		</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>int bind(int sockfd,struct sockaddr *myaddr,int addrlen);<br>功能：绑定本地地址和端口<br>参数：<br>sockfd－socket描述符<br>myaddr－自己的地址<br>addrlen－地址结构长度<br>返回值：<br>0－成功，-1－失败，errno为错误代码 </p>
-</blockquote>
-<h2 id="监听端口"><a href="#监听端口" class="headerlink" title="监听端口"></a>监听端口</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>( listen(sockfd,BACKLOG) ==<span class="number">-1</span>)&#123;	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;listen error\n&quot;</span>);	</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>int listen(int sockfd,int backlog)<br>功能：监听本地地址和端口<br>参数：<br>sockfd－已绑定的socket描述符<br>backlog－以完成连接，等待接受的队列长度<br>返回值<br>0－成功，-1－失败，errno为错误代码</p>
-</blockquote>
-<h2 id="接受客户端连接"><a href="#接受客户端连接" class="headerlink" title="接受客户端连接"></a>接受客户端连接</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> sin_size=<span class="keyword">sizeof</span>(struct sockaddr_in);	</span><br><span class="line"><span class="keyword">int</span> new_fd= accept(sockfd,(struct sockaddr *)&amp;clientaddr,&amp;sin_size);</span><br><span class="line"><span class="keyword">if</span>(( new_fd==<span class="number">-1</span>)&#123;		</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;accept errot\n&quot;</span>);	</span><br><span class="line">	<span class="keyword">continue</span>;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>int accept(int sockfd,struct sockaddr *clientaddr,int addrlen);<br>功能：接受连接<br>参数：<br>sockfd－socket描述符<br>clientaddr－客户端地址<br>addrlen－地址结构长度<br>返回值:<br>0－成功，返回新的socket描述符标识已接受的连接<br>-1－失败，errno为错误代码</p>
-</blockquote>
-<h2 id="接收数据"><a href="#接收数据" class="headerlink" title="接收数据"></a>接收数据</h2><blockquote>
-<p>int read(int fd,char *buf,int len);<br>功能：从socket读取数据<br>参数：<br>fd－socket描述符<br>buf－接收数据缓冲区<br>len－要读取数据大小<br>返回值<br>≥0－成功，-1－失败，errno为错误代码</p>
-</blockquote>
-<h2 id="发送数据"><a href="#发送数据" class="headerlink" title="发送数据"></a>发送数据</h2><blockquote>
-<p>int write(int fd,char *buf,int len);<br>功能：从socket读取数据<br>参数：<br>fd－socket描述符<br>buf－发送数据缓冲区<br>len－要发送数据大小<br>返回值<br>≥0－成功，-1－失败，errno为错误代码</p>
-</blockquote>
-<h2 id="关闭socket"><a href="#关闭socket" class="headerlink" title="关闭socket"></a>关闭socket</h2><blockquote>
-<p>int close(int sockfd)<br>功能：关闭socket<br>参数：<br>sockfd－socket描述符<br>返回值<br>0－成功，-1－失败，errno为错误代码<br>说明<br>调用close只是将对sockfd的引用减1，直到对sockfd的引用为0时才清除sockfd ，TCP协议将继续使用sockfd，直到所有数据发送完成 </p>
-</blockquote>
-<h2 id="连接服务器"><a href="#连接服务器" class="headerlink" title="连接服务器"></a>连接服务器</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>( connect(sockfd,(struct sockaddr *)&amp;srvaddr,<span class="keyword">sizeof</span>(struct sockaddr) )==<span class="number">-1</span>)&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;connect error\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>int connect(int sockfd,struct sockaddr *servaddr,int addrlen)<br>功能：连接服务器<br>参数：<br>sockfd－socket描述符<br>servaddr－服务器地址<br>addrlen－地址结构长度<br>返回值：<br>0－成功，-1－失败，errno为错误代码</p>
-</blockquote>
-<h1 id="高级socket函数"><a href="#高级socket函数" class="headerlink" title="高级socket函数"></a>高级socket函数</h1><h2 id="域名访问"><a href="#域名访问" class="headerlink" title="域名访问"></a>域名访问</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hostent</span> *<span class="title">he</span>=</span>gethostbyname(“www.sina.com.cn”);</span><br><span class="line"><span class="keyword">if</span>(he!=<span class="literal">NULL</span>)&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;h_name:%s\n&quot;</span>,he-&gt;h_name);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;h_length:%d\n&quot;</span>,he-&gt;h_length);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;h_addrtype:%d&quot;</span>,he-&gt;h_addrtype;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;he-&gt;h_aliases[i] !=<span class="literal">NULL</span>;i++)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;h_aliases%d:%s\n&quot;</span>,i+<span class="number">1</span>,he-&gt;h_aliases[i]); </span><br><span class="line">	<span class="comment">//列出所有地址</span></span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;he-&gt;h_addr_list[i]!=<span class="literal">NULL</span>;i++)&#123;</span><br><span class="line">		struct in_addr *addr;</span><br><span class="line">		addr=(struct in_addr *)he-&gt;h_addr_list[i];</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;ip%d:%s\n&quot;</span>,(i+<span class="number">1</span>),inet_ntoa(*addr));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;gethostbyname error:%s\n&quot;</span>,hstrerror(h_errno));</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>域名到IP的转换函数<br>struct hostent<em> gethostbyname(const char </em>name)<br>功能：查询域名对应的IP<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hostent</span>&#123;</span></span><br><span class="line">	<span class="keyword">char</span>	 h_name;	<span class="comment">/*主机正式名称*/</span></span><br><span class="line">	<span class="keyword">char</span>	**h_aliases;	<span class="comment">/*别名列表，以NULL结束*/</span></span><br><span class="line">	<span class="keyword">int</span> 	h_addrtype;	<span class="comment">/*主机地址类型：AF_INET*/</span></span><br><span class="line">	<span class="keyword">int</span> 	h_length;	<span class="comment">/*主机地址长度：4字节32位*/</span></span><br><span class="line">	<span class="keyword">char</span> 	**h_addr_list;	<span class="comment">/*主机网络地址列表，以NULL结束*/</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> 	h_addr 	h_addr_list[0]; <span class="comment">//主机的第一个网络地址</span></span></span><br></pre></td></tr></table></figure></p>
-<h2 id="recv和send"><a href="#recv和send" class="headerlink" title="recv和send"></a>recv和send</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">recv</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">void</span>* buf,<span class="keyword">int</span> len, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">send</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">void</span>* buf,<span class="keyword">int</span> len,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>功能：通过参数控制读写数据<br>参数：<br>sockfd－socket描述符<br>buf－发送或接收数据缓冲区<br>len－发送或接收数据长度<br>flags－发送或接收数据的控制参数<br>返回值：≥0－成功，-1失败</p>
-</blockquote>
-<p><strong>控制参数说明</strong></p>
-<blockquote>
-<p>flags=0，相当于read和write函数<br>flags=MSG_DONTROUTE，发送数据不查找路由表，适用于局域网，或同一网段<br>flags=MSG_OOB，发送和接收带外数据<br>flags=MSG_PEEK，接收数据时不从缓冲区移走数据，其他进程调用read或recv仍然可以读到数据<br>flags=MSG_WAITALL，数据量不够时，读操作等待，不返回，但在收到、文件结束符、信号以及出错时，仍然会结束。</p>
-<h2 id="高级socket函数-1"><a href="#高级socket函数-1" class="headerlink" title="高级socket函数"></a>高级socket函数</h2><p><img src="/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png" alt="1"></p>
-<h2 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h2><p><strong>多路复用函数select</strong><br>int select(int maxfd,fd_set <em>rdset,fd_set </em>wrest,fd_set <em>exset,struct timeval </em>timeout);<br>功能：检查多个文件描述符（socket描述符）是否就绪，当某一个描述符就绪（可读、可写或发生异常）时函数返回。可以实现输入输出多路复用<br>返回值：有描述符就绪则返回就绪的描述符个数；超时时间内没有描述符就绪返回0；执行失败返回-1。</p>
-</blockquote>
-<p><strong>参数：</strong></p>
-<blockquote>
-<p>maxfd－需要测试的描述符的最大值，实际测试的描述符从0－maxfd-1<br>rdset－需要测试是否可读的描述符集合（包括处于listen状态的socket接收到连接请求）<br>wrset－需要测试是否可写的描述符集合（包括以非阻塞方式调用connect是否成功）<br>exset－需要测试是否异常的描述符集合（包括接收带外数据的socket有带外数据到达）<br>timeout－指定测试超时的时间 </p>
-</blockquote>
-<p><strong>timeout参数</strong></p>
-<blockquote>
-<p>timeval结构<br>timeout=NULL，select将永远阻塞直到有一个描述符就绪，或者出现错误（接收到信号）。<br>timeout&gt;0，在timeout时间内如果有描述符就绪则返回，否则在timeout时间后返回0；如果将3个描述符集合都设定为NULL则select相当于sleep函数，只是时间可以精确到毫秒<br>timeout=0，select检查完描述符集合后立即返回 </p>
-</blockquote>
-<p><strong>设置描述符集合</strong></p>
-<blockquote>
-<p>FD_ZERO(fd_set <em>fdset)－清空描述符集合<br>FD_SET(int fd,fd_set </em>fdset)－将一个描述符添加到描述符集合<br>FD_CLR(int fd,fd_set <em>fdset)－将一个描述符从描述符集合中清除<br>FD_ISSET(int fd,fd_set </em>fdset)－检测一个描述符是否就绪<br>在设置描述符集合前应该先调用FD_ZERO将集合清空，每次调用select函数前应该重新设置这3个集合<br>三个集合中的描述符可以交叉 </p>
-</blockquote>
-<h1 id="socket选项"><a href="#socket选项" class="headerlink" title="socket选项"></a>socket选项</h1><p><strong>设置/获取socket选项函数</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getsockopt</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">int</span> level,<span class="keyword">int</span> optname,<span class="keyword">void</span> *optval,sock_len *optlen)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">int</span> level,<span class="keyword">int</span> optname,<span class="keyword">void</span> *optval,sock_len optlen)</span></span>;</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>功能：获取或设置socket选项<br>返回值： 0－成功，－1失败</p>
-</blockquote>
-<p><strong>参数：</strong></p>
-<blockquote>
-<p>sockfd－socket描述符<br>level－选项级别<br>SOL_SOCKET —通用socket选项<br>IPPROTO_IP—IP选项<br>IPPROTO_TCP—TCP选项<br>optname—选项名称<br>optval—选项值<br>optlen—选项值的长度/存放选项值长度的指针  </p>
-</blockquote>
-<p><strong>通用socket选项</strong></p>
-<blockquote>
-<p>SO_KEEPALIVE<br>设置该选项后，2小时内没有数据交换时，TCP协议将自动发送探测数据包，检查网络连接<br>SO_RCVBUF和SO_SNDBUF<br>设置发送和接收数据缓冲区的大小（在连接建立以前设置）<br>SO_RCVTIMEO和SO_SNDTIMEO<br>设置发送和接收超时，当指定时间内数据没有成功接收或发送，发送和接收函数将返回。<br>SO_REUSEADDR<br>快速重启服务器程序<br>启动服务器程序的多个实例（绑定本地IP地址的多个别名）</p>
-</blockquote>
-<p><strong>阻塞/非阻塞模式</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fd,<span class="keyword">int</span> cmd,…)</span></span></span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>功能：<br>设置socket为阻塞/非阻塞模式<br>设置/获取socket的所有者<br>参数：<br>fd－文件（socket）描述符<br>cmd－执行的操作<br>其他参数－根据cmd选择适当参数<br>返回值：≥0－成功，-1－失败</p>
-</blockquote>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>操作类型</th>
-<th>参数</th>
-<th>返回值</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>F_GETFL</td>
-<td>0</td>
-<td>描述符标志</td>
-<td>获得描述符标志</td>
-</tr>
-<tr>
-<td>F_SETFL</td>
-<td>O_NONBLOCK</td>
-<td>成功0，否则-1</td>
-<td>设置socket为非阻塞方式</td>
-</tr>
-<tr>
-<td>F_GETOWN</td>
-<td>int *</td>
-<td>成功0，否则-1</td>
-<td>获得socket的所有者</td>
-</tr>
-<tr>
-<td>F_SETOWN</td>
-<td>int *</td>
-<td>成功0，否则-1</td>
-<td>设置socket的所有者</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>非阻塞方式<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">fcntl(socket_fd,F_SETFL,fcntl(socket_fd,F_GETFL,<span class="number">0</span>)|O_NONBLOCK);</span><br></pre></td></tr></table></figure><br>阻塞方式<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">fcntl(socket_fd,F_SETFL,fcntl(socket_fd,F_GETFL,<span class="number">0</span>)&amp;^O_NONBLOCK);</span><br></pre></td></tr></table></figure></p>
-<p><strong>控制输入输出</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ioctl</span><span class="params">(<span class="keyword">int</span> fd,<span class="keyword">int</span> req,…)</span></span>;</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>功能：控制输入输出<br>参数：<br>fd－文件（socket）描述符<br>req－执行的操作类型<br>第三个参数－总是指针类型，存储操作返回的数据或操作所需的数据<br>返回值：0－成功，-1－失败</p>
-</blockquote>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>操作类型</th>
-<th>参数类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SIOCATMARK</td>
-<td>int*</td>
-<td>是否到达带外标志</td>
-</tr>
-<tr>
-<td>FIOASYNC</td>
-<td>int*</td>
-<td>异步输入/输出标志</td>
-</tr>
-<tr>
-<td>FIONREAD</td>
-<td>int*</td>
-<td>缓冲区中有多少字节数据可读</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h1 id="UDP-Socket编程"><a href="#UDP-Socket编程" class="headerlink" title="UDP Socket编程"></a>UDP Socket编程</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span>* <span class="title">saddrp</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="comment">//创建socket</span></span><br><span class="line">     <span class="keyword">int</span> sockfd = socket(AF_INET,SOCK_DGRAM,<span class="number">0</span>);</span><br><span class="line">     <span class="keyword">if</span> (<span class="number">0</span> &gt; sockfd)</span><br><span class="line">     &#123;</span><br><span class="line">          perror(<span class="string">&quot;sockfd&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">//准备地址</span></span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr</span> =</span> &#123;&#125;;</span><br><span class="line">     addr.sin_family = AF_INET;<span class="comment">//ipv4</span></span><br><span class="line">     addr.sin_port = htons(<span class="number">5577</span>);<span class="comment">//端口号</span></span><br><span class="line">     addr.sin_addr.s_addr = inet_addr(<span class="string">&quot;192.168.2.177&quot;</span>);<span class="comment">//我的ip地址</span></span><br><span class="line">     <span class="comment">//绑定</span></span><br><span class="line">     <span class="keyword">int</span> ret = bind(sockfd,(saddrp)&amp;addr,<span class="keyword">sizeof</span>(addr));</span><br><span class="line">     <span class="keyword">if</span> (<span class="number">0</span> &gt; ret)</span><br><span class="line">     &#123;</span><br><span class="line">          perror(<span class="string">&quot;bind&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">src_addr</span> =</span>&#123;&#125;;</span><br><span class="line">     <span class="keyword">socklen_t</span> addr_len = <span class="keyword">sizeof</span>(struct sockaddr_in);</span><br><span class="line">     <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">     &#123;</span><br><span class="line">          <span class="keyword">char</span> buf[<span class="number">255</span>] = &#123;&#125;;</span><br><span class="line">          <span class="comment">//接收数据和来源的ip地址</span></span><br><span class="line">          recvfrom(sockfd,buf,<span class="keyword">sizeof</span>(buf),<span class="number">0</span>,(saddrp)&amp;src_addr,&amp;addr_len);</span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">&quot;Recv:%s\n&quot;</span>,buf);</span><br><span class="line">          <span class="keyword">if</span> (<span class="number">0</span> == <span class="built_in">strcmp</span>(buf,<span class="string">&quot;q&quot;</span>)) <span class="keyword">break</span>;</span><br><span class="line">          <span class="comment">//发送数据给目标地址</span></span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">&quot;Please input the return value:&quot;</span>);</span><br><span class="line">          gets(buf);</span><br><span class="line">          sendto(sockfd,buf,<span class="built_in">strlen</span>(buf)+<span class="number">1</span>,<span class="number">0</span>,(saddrp)&amp;src_addr,addr_len);</span><br><span class="line">          <span class="keyword">if</span> (<span class="number">0</span> == <span class="built_in">strcmp</span>(buf,<span class="string">&quot;q&quot;</span>)) <span class="keyword">break</span>;</span><br><span class="line">     &#125;  </span><br><span class="line">     <span class="comment">//关闭socket对象</span></span><br><span class="line">     close(sockfd);</span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="原始socket编程"><a href="#原始socket编程" class="headerlink" title="原始socket编程"></a>原始socket编程</h1><p><strong>创建原始socket</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span> <span class="params">(<span class="keyword">int</span> family, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span></span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>参数：<br>family－AF_INET<br>type－SOCK_RAW<br>protocol<br>IPPROTO_ICMP－ICMP数据包<br>IPPROTO_IGMP－IGMP数据包<br>IPPROTO_IP－IP数据包<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send_icmp</span><span class="params">(<span class="keyword">int</span> sockfd,sockaddr_in send_addr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">short</span> <span class="keyword">int</span> seq=<span class="number">0</span>;</span><br><span class="line">     <span class="keyword">char</span> buf[<span class="number">8</span>+<span class="number">8</span>];</span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">icmphdr</span> *<span class="title">icmp</span>=</span>(struct icmphdr *)buf;</span><br><span class="line">     icmp-&gt;type=ICMP_ECHO;</span><br><span class="line">     icmp-&gt;code=<span class="number">0</span>;</span><br><span class="line">     icmp-&gt;checksum=CHECK_SUM;</span><br><span class="line">     icmp-&gt;un.echo.id=getpid();</span><br><span class="line">     icmp-&gt;un.echo.sequence=seq++;</span><br><span class="line">     <span class="keyword">int</span> len=send(sockfd,buf,buflen);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">recv_icmp</span><span class="params">(<span class="keyword">int</span> sockfd,sockaddr_in send_addr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="keyword">char</span> buf[<span class="number">256</span>];</span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">icmphdr</span> *<span class="title">icmp</span>;</span></span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">ip</span> *<span class="title">ip</span>;</span></span><br><span class="line">     <span class="keyword">int</span> ipheadlen;</span><br><span class="line">     <span class="keyword">int</span> icmplen;</span><br><span class="line">     <span class="keyword">int</span> n=recvfrom(sockfd,buf,<span class="keyword">sizeof</span>(buf),<span class="number">0</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>);</span><br><span class="line">     <span class="keyword">if</span>(n&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">          <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;recv error&quot;</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     ip=(struct ip *)buf;	</span><br><span class="line">     ipheadlen=ip-&gt;ip_hl&lt;&lt;<span class="number">2</span>;</span><br><span class="line">     icmplen=n-ipheadlen;</span><br><span class="line">     icmp=(struct icmphdr *)(buf+ipheadlen);</span><br><span class="line">     <span class="keyword">if</span>(icmp-&gt;type==ICMP_ECHOREPLY)</span><br><span class="line">          <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;recv from &quot;</span>&lt;&lt;inet_ntoa(send_addr.sin_addr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>Socket</tag>
-        <tag>Linux</tag>
-        <tag>NOTE</tag>
-        <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>NOTE|计算机组织与体系结构</title>
-    <url>/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/</url>
-    <content><![CDATA[<p><strong>计组知识点的总结笔记</strong><br><span id="more"></span></p>
-<h1 id="（一）计算机系统概论"><a href="#（一）计算机系统概论" class="headerlink" title="（一）计算机系统概论"></a>（一）计算机系统概论</h1><h2 id="1-复习内容"><a href="#1-复习内容" class="headerlink" title="1.复习内容"></a>1.复习内容</h2><p>计算机的基本组成，冯.诺依曼计算机原理，计算机系统的层次结构，计算机的分类及性能描述，计算机的发展历程</p>
-<h2 id="2-具体要求"><a href="#2-具体要求" class="headerlink" title="2.具体要求"></a>2.具体要求</h2><h3 id="计算机的基本组成"><a href="#计算机的基本组成" class="headerlink" title="计算机的基本组成"></a>计算机的基本组成</h3><h4 id="硬件组成"><a href="#硬件组成" class="headerlink" title="硬件组成"></a>硬件组成</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/1.png" alt="1"></p>
-<ul>
-<li>运算器：主要功能是进行加、减、乘、除等算术运算,还可进行逻辑运算</li>
-<li>存储器：目前采用半导体器件来担当此任务。通常，在存储器中保存一个数的16个触发器,称为一个存储单元。存储器是由许多存储单元组成。每个存储单元的编号,称为地址。向存储器中存数或者从存储器中取数，都要按给定的地址来寻找所选的存储单元。</li>
-<li>控制器：从内存中取出解题步骤加以分析,然后执行某种操作。</li>
-<li>计算机的输入/输出设备通常称为外围设备。适配器的作用相当与一个转换器。它可以保证外围设备用计算机系统特性所要求的形式发送或接受信息。  <h4 id="软件组成"><a href="#软件组成" class="headerlink" title="软件组成"></a>软件组成</h4>计算机软件一般分为两大类：一类叫系统程序,一类叫应用程序。<br>系统程序用来简化程序设计,简化使用方法,提高计算机的使用效率,发挥和扩大计算机的功能及用途。<br>应用程序是用户利用计算机来解决某些问题所编制的程序。</li>
-</ul>
-<h3 id="冯-诺依曼计算机工作原理"><a href="#冯-诺依曼计算机工作原理" class="headerlink" title="冯.诺依曼计算机工作原理"></a>冯.诺依曼计算机工作原理</h3><h4 id="冯-诺依曼计算机结构及工作过程"><a href="#冯-诺依曼计算机结构及工作过程" class="headerlink" title="冯.诺依曼计算机结构及工作过程"></a>冯.诺依曼计算机结构及工作过程</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/2.png" alt="2"></p>
-<h4 id="冯-诺依曼计算机特点"><a href="#冯-诺依曼计算机特点" class="headerlink" title="冯.诺依曼计算机特点"></a>冯.诺依曼计算机特点</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/3.png" alt="3"></p>
-<h3 id="计算机系统的层次结构"><a href="#计算机系统的层次结构" class="headerlink" title="计算机系统的层次结构"></a>计算机系统的层次结构</h3><h4 id="层次结构图"><a href="#层次结构图" class="headerlink" title="层次结构图"></a>层次结构图</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/4.png" alt="4"></p>
-<h4 id="各层的含义和界面定义"><a href="#各层的含义和界面定义" class="headerlink" title="各层的含义和界面定义"></a>各层的含义和界面定义</h4><h4 id="计算机体系结构、组成和实现定义"><a href="#计算机体系结构、组成和实现定义" class="headerlink" title="计算机体系结构、组成和实现定义"></a>计算机体系结构、组成和实现定义</h4><ul>
-<li>系统结构:由程序员所看到的计算机系统的属性，即概念性结构及功能特性。</li>
-<li>计算机组成:计算机系统的逻辑实现，包括最低层内部算法、数据流、控制流的逻辑实现</li>
-<li>计算机实现 :计算机实现就是指计算机组成的物理实现。</li>
-</ul>
-<h3 id="计算机的分类及性能描述"><a href="#计算机的分类及性能描述" class="headerlink" title="计算机的分类及性能描述"></a>计算机的分类及性能描述</h3><h4 id="Flynn分类法"><a href="#Flynn分类法" class="headerlink" title="Flynn分类法"></a>Flynn分类法</h4><h4 id="Amdahl定律和应用"><a href="#Amdahl定律和应用" class="headerlink" title="Amdahl定律和应用"></a>Amdahl定律和应用</h4><h4 id="吞吐量、响应时间"><a href="#吞吐量、响应时间" class="headerlink" title="吞吐量、响应时间"></a>吞吐量、响应时间</h4><h4 id="CPU时钟周期、主频、CPI、CPU执行时间"><a href="#CPU时钟周期、主频、CPI、CPU执行时间" class="headerlink" title="CPU时钟周期、主频、CPI、CPU执行时间"></a>CPU时钟周期、主频、CPI、CPU执行时间</h4><h4 id="MIPS、MFLOPS"><a href="#MIPS、MFLOPS" class="headerlink" title="MIPS、MFLOPS"></a>MIPS、MFLOPS</h4>]]></content>
-      <tags>
-        <tag>CS</tag>
-        <tag>NOTE</tag>
-        <tag>计组</tag>
       </tags>
   </entry>
   <entry>
@@ -1395,6 +1199,202 @@
 -->]]></content>
       <tags>
         <tag>英语</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NOTE|网络程序设计</title>
+    <url>/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</url>
+    <content><![CDATA[<p><strong>网络程序设计简单的总结</strong><br><strong>ψ(｀∇´)ψ</strong><br><span id="more"></span></p>
+<h1 id="Linux-编程基础"><a href="#Linux-编程基础" class="headerlink" title="Linux 编程基础"></a>Linux 编程基础</h1><h2 id="C语言编译"><a href="#C语言编译" class="headerlink" title="C语言编译"></a>C语言编译</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gcc hello.c –o hello </span><br></pre></td></tr></table></figure>
+<h2 id="Linux常用网络调试命令"><a href="#Linux常用网络调试命令" class="headerlink" title="Linux常用网络调试命令"></a>Linux常用网络调试命令</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看网络配置（网卡）</span><br><span class="line">ifconfig</span><br><span class="line">查看所有网络连接状态</span><br><span class="line">nestat – a</span><br><span class="line">查看TCP协议网络连接状态</span><br><span class="line">netstat –t</span><br><span class="line">查看网络连接所属进程PID</span><br><span class="line">netstat -p</span><br><span class="line">检查网络是否可达</span><br><span class="line">ping 127.0.0.1 </span><br></pre></td></tr></table></figure>
+<h2 id="Linux操作基础"><a href="#Linux操作基础" class="headerlink" title="Linux操作基础"></a>Linux操作基础</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls 显示当前目录中的内容 </span><br><span class="line">ls －l</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd 切换目录</span><br><span class="line">cd /mnt/usb</span><br><span class="line">cd ..</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir 创建目录</span><br><span class="line">mkdir work</span><br><span class="line">rmdir 删除目录</span><br><span class="line">rmdir work</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cp 复制文件</span><br><span class="line">cp prog1.c prog2.c</span><br><span class="line">cp prog1.c /mnt/usb</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rm 删除文件或目录</span><br><span class="line">rm prog1.c</span><br><span class="line">rm *.*</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mv 移动或改变文件名称</span><br><span class="line">mv prog1.c ..</span><br><span class="line">mv pro1.c prog2.c</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">more命令</span><br><span class="line">ls –l|more 显示画面暂停</span><br><span class="line">more prog1.c 显示文本文件内容</span><br><span class="line">pwd 显示当前所在目录</span><br></pre></td></tr></table></figure>
+<h1 id="基本socket函数"><a href="#基本socket函数" class="headerlink" title="基本socket函数"></a>基本socket函数</h1><h2 id="必须的头文件"><a href="#必须的头文件" class="headerlink" title="必须的头文件"></a>必须的头文件</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="创建网络端点"><a href="#创建网络端点" class="headerlink" title="创建网络端点"></a>创建网络端点</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> sock;</span><br><span class="line"><span class="keyword">if</span>((sock=socket(AF_INET,SOCK_STREAM,<span class="number">0</span>))&lt;<span class="number">0</span>)</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>int socket (int family, int type, int protocol)<br>功能：创建socket描述符<br>参数：（P34表2－1描述了可能的参数值）<br>family（协议簇）：AF_INET、AF_UNIX<br>type（类型）：SOCK_STREAM、SOCK_DGRAM、SOCK_RAW<br>protocol（协议）：默认为0<br>返回值：&gt;0－socket描述符， -1－失败， 系统全局变量errno为错误代码</p>
+<h2 id="设置地址"><a href="#设置地址" class="headerlink" title="设置地址"></a>设置地址</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr</span>;</span></span><br><span class="line">bzero(&amp;srvaddr,<span class="keyword">sizeof</span>(srvaddr));</span><br><span class="line">addr.sin_family=AF_INET;</span><br><span class="line">addr.sin_port=htons(<span class="number">1234</span>);</span><br><span class="line"><span class="keyword">if</span>(inet_aton(<span class="string">&quot;127.0.0.1&quot;</span>,srvaddr.sin_addr.s_addr)==<span class="number">-1</span>)&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;addr convert error\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>TCP/IP协议的socket地址<br>常用地址形式（字符串）：“127.0.0.1”<br>地址转换函数:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">inet_aton(<span class="keyword">const</span> <span class="keyword">char</span> *cp,struct in_addr *inp);</span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">inet_ntoa</span><span class="params">(struct in_addr in)</span></span>;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="绑定服务器地址和端口"><a href="#绑定服务器地址和端口" class="headerlink" title="绑定服务器地址和端口"></a>绑定服务器地址和端口</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>( bind(sockfd,(struct sockaddr *)&amp;addr,<span class="keyword">sizeof</span>(struct sockaddr))==<span class="number">-1</span>)&#123;		</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;bind error\n&quot;</span>);		</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>int bind(int sockfd,struct sockaddr *myaddr,int addrlen);<br>功能：绑定本地地址和端口<br>参数：<br>sockfd－socket描述符<br>myaddr－自己的地址<br>addrlen－地址结构长度<br>返回值：<br>0－成功，-1－失败，errno为错误代码 </p>
+</blockquote>
+<h2 id="监听端口"><a href="#监听端口" class="headerlink" title="监听端口"></a>监听端口</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>( listen(sockfd,BACKLOG) ==<span class="number">-1</span>)&#123;	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;listen error\n&quot;</span>);	</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>int listen(int sockfd,int backlog)<br>功能：监听本地地址和端口<br>参数：<br>sockfd－已绑定的socket描述符<br>backlog－以完成连接，等待接受的队列长度<br>返回值<br>0－成功，-1－失败，errno为错误代码</p>
+</blockquote>
+<h2 id="接受客户端连接"><a href="#接受客户端连接" class="headerlink" title="接受客户端连接"></a>接受客户端连接</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> sin_size=<span class="keyword">sizeof</span>(struct sockaddr_in);	</span><br><span class="line"><span class="keyword">int</span> new_fd= accept(sockfd,(struct sockaddr *)&amp;clientaddr,&amp;sin_size);</span><br><span class="line"><span class="keyword">if</span>(( new_fd==<span class="number">-1</span>)&#123;		</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;accept errot\n&quot;</span>);	</span><br><span class="line">	<span class="keyword">continue</span>;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>int accept(int sockfd,struct sockaddr *clientaddr,int addrlen);<br>功能：接受连接<br>参数：<br>sockfd－socket描述符<br>clientaddr－客户端地址<br>addrlen－地址结构长度<br>返回值:<br>0－成功，返回新的socket描述符标识已接受的连接<br>-1－失败，errno为错误代码</p>
+</blockquote>
+<h2 id="接收数据"><a href="#接收数据" class="headerlink" title="接收数据"></a>接收数据</h2><blockquote>
+<p>int read(int fd,char *buf,int len);<br>功能：从socket读取数据<br>参数：<br>fd－socket描述符<br>buf－接收数据缓冲区<br>len－要读取数据大小<br>返回值<br>≥0－成功，-1－失败，errno为错误代码</p>
+</blockquote>
+<h2 id="发送数据"><a href="#发送数据" class="headerlink" title="发送数据"></a>发送数据</h2><blockquote>
+<p>int write(int fd,char *buf,int len);<br>功能：从socket读取数据<br>参数：<br>fd－socket描述符<br>buf－发送数据缓冲区<br>len－要发送数据大小<br>返回值<br>≥0－成功，-1－失败，errno为错误代码</p>
+</blockquote>
+<h2 id="关闭socket"><a href="#关闭socket" class="headerlink" title="关闭socket"></a>关闭socket</h2><blockquote>
+<p>int close(int sockfd)<br>功能：关闭socket<br>参数：<br>sockfd－socket描述符<br>返回值<br>0－成功，-1－失败，errno为错误代码<br>说明<br>调用close只是将对sockfd的引用减1，直到对sockfd的引用为0时才清除sockfd ，TCP协议将继续使用sockfd，直到所有数据发送完成 </p>
+</blockquote>
+<h2 id="连接服务器"><a href="#连接服务器" class="headerlink" title="连接服务器"></a>连接服务器</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>( connect(sockfd,(struct sockaddr *)&amp;srvaddr,<span class="keyword">sizeof</span>(struct sockaddr) )==<span class="number">-1</span>)&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;connect error\n&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">1</span>);	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>int connect(int sockfd,struct sockaddr *servaddr,int addrlen)<br>功能：连接服务器<br>参数：<br>sockfd－socket描述符<br>servaddr－服务器地址<br>addrlen－地址结构长度<br>返回值：<br>0－成功，-1－失败，errno为错误代码</p>
+</blockquote>
+<h1 id="高级socket函数"><a href="#高级socket函数" class="headerlink" title="高级socket函数"></a>高级socket函数</h1><h2 id="域名访问"><a href="#域名访问" class="headerlink" title="域名访问"></a>域名访问</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hostent</span> *<span class="title">he</span>=</span>gethostbyname(“www.sina.com.cn”);</span><br><span class="line"><span class="keyword">if</span>(he!=<span class="literal">NULL</span>)&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;h_name:%s\n&quot;</span>,he-&gt;h_name);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;h_length:%d\n&quot;</span>,he-&gt;h_length);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;h_addrtype:%d&quot;</span>,he-&gt;h_addrtype;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;he-&gt;h_aliases[i] !=<span class="literal">NULL</span>;i++)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;h_aliases%d:%s\n&quot;</span>,i+<span class="number">1</span>,he-&gt;h_aliases[i]); </span><br><span class="line">	<span class="comment">//列出所有地址</span></span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;he-&gt;h_addr_list[i]!=<span class="literal">NULL</span>;i++)&#123;</span><br><span class="line">		struct in_addr *addr;</span><br><span class="line">		addr=(struct in_addr *)he-&gt;h_addr_list[i];</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;ip%d:%s\n&quot;</span>,(i+<span class="number">1</span>),inet_ntoa(*addr));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;gethostbyname error:%s\n&quot;</span>,hstrerror(h_errno));</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>域名到IP的转换函数<br>struct hostent<em> gethostbyname(const char </em>name)<br>功能：查询域名对应的IP<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hostent</span>&#123;</span></span><br><span class="line">	<span class="keyword">char</span>	 h_name;	<span class="comment">/*主机正式名称*/</span></span><br><span class="line">	<span class="keyword">char</span>	**h_aliases;	<span class="comment">/*别名列表，以NULL结束*/</span></span><br><span class="line">	<span class="keyword">int</span> 	h_addrtype;	<span class="comment">/*主机地址类型：AF_INET*/</span></span><br><span class="line">	<span class="keyword">int</span> 	h_length;	<span class="comment">/*主机地址长度：4字节32位*/</span></span><br><span class="line">	<span class="keyword">char</span> 	**h_addr_list;	<span class="comment">/*主机网络地址列表，以NULL结束*/</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> 	h_addr 	h_addr_list[0]; <span class="comment">//主机的第一个网络地址</span></span></span><br></pre></td></tr></table></figure></p>
+<h2 id="recv和send"><a href="#recv和send" class="headerlink" title="recv和send"></a>recv和send</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">recv</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">void</span>* buf,<span class="keyword">int</span> len, <span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">send</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">void</span>* buf,<span class="keyword">int</span> len,<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>功能：通过参数控制读写数据<br>参数：<br>sockfd－socket描述符<br>buf－发送或接收数据缓冲区<br>len－发送或接收数据长度<br>flags－发送或接收数据的控制参数<br>返回值：≥0－成功，-1失败</p>
+</blockquote>
+<p><strong>控制参数说明</strong></p>
+<blockquote>
+<p>flags=0，相当于read和write函数<br>flags=MSG_DONTROUTE，发送数据不查找路由表，适用于局域网，或同一网段<br>flags=MSG_OOB，发送和接收带外数据<br>flags=MSG_PEEK，接收数据时不从缓冲区移走数据，其他进程调用read或recv仍然可以读到数据<br>flags=MSG_WAITALL，数据量不够时，读操作等待，不返回，但在收到、文件结束符、信号以及出错时，仍然会结束。</p>
+<h2 id="高级socket函数-1"><a href="#高级socket函数-1" class="headerlink" title="高级socket函数"></a>高级socket函数</h2><p><img src="/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/1.png" alt="1"></p>
+<h2 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h2><p><strong>多路复用函数select</strong><br>int select(int maxfd,fd_set <em>rdset,fd_set </em>wrest,fd_set <em>exset,struct timeval </em>timeout);<br>功能：检查多个文件描述符（socket描述符）是否就绪，当某一个描述符就绪（可读、可写或发生异常）时函数返回。可以实现输入输出多路复用<br>返回值：有描述符就绪则返回就绪的描述符个数；超时时间内没有描述符就绪返回0；执行失败返回-1。</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<blockquote>
+<p>maxfd－需要测试的描述符的最大值，实际测试的描述符从0－maxfd-1<br>rdset－需要测试是否可读的描述符集合（包括处于listen状态的socket接收到连接请求）<br>wrset－需要测试是否可写的描述符集合（包括以非阻塞方式调用connect是否成功）<br>exset－需要测试是否异常的描述符集合（包括接收带外数据的socket有带外数据到达）<br>timeout－指定测试超时的时间 </p>
+</blockquote>
+<p><strong>timeout参数</strong></p>
+<blockquote>
+<p>timeval结构<br>timeout=NULL，select将永远阻塞直到有一个描述符就绪，或者出现错误（接收到信号）。<br>timeout&gt;0，在timeout时间内如果有描述符就绪则返回，否则在timeout时间后返回0；如果将3个描述符集合都设定为NULL则select相当于sleep函数，只是时间可以精确到毫秒<br>timeout=0，select检查完描述符集合后立即返回 </p>
+</blockquote>
+<p><strong>设置描述符集合</strong></p>
+<blockquote>
+<p>FD_ZERO(fd_set <em>fdset)－清空描述符集合<br>FD_SET(int fd,fd_set </em>fdset)－将一个描述符添加到描述符集合<br>FD_CLR(int fd,fd_set <em>fdset)－将一个描述符从描述符集合中清除<br>FD_ISSET(int fd,fd_set </em>fdset)－检测一个描述符是否就绪<br>在设置描述符集合前应该先调用FD_ZERO将集合清空，每次调用select函数前应该重新设置这3个集合<br>三个集合中的描述符可以交叉 </p>
+</blockquote>
+<h1 id="socket选项"><a href="#socket选项" class="headerlink" title="socket选项"></a>socket选项</h1><p><strong>设置/获取socket选项函数</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getsockopt</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">int</span> level,<span class="keyword">int</span> optname,<span class="keyword">void</span> *optval,sock_len *optlen)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd,<span class="keyword">int</span> level,<span class="keyword">int</span> optname,<span class="keyword">void</span> *optval,sock_len optlen)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>功能：获取或设置socket选项<br>返回值： 0－成功，－1失败</p>
+</blockquote>
+<p><strong>参数：</strong></p>
+<blockquote>
+<p>sockfd－socket描述符<br>level－选项级别<br>SOL_SOCKET —通用socket选项<br>IPPROTO_IP—IP选项<br>IPPROTO_TCP—TCP选项<br>optname—选项名称<br>optval—选项值<br>optlen—选项值的长度/存放选项值长度的指针  </p>
+</blockquote>
+<p><strong>通用socket选项</strong></p>
+<blockquote>
+<p>SO_KEEPALIVE<br>设置该选项后，2小时内没有数据交换时，TCP协议将自动发送探测数据包，检查网络连接<br>SO_RCVBUF和SO_SNDBUF<br>设置发送和接收数据缓冲区的大小（在连接建立以前设置）<br>SO_RCVTIMEO和SO_SNDTIMEO<br>设置发送和接收超时，当指定时间内数据没有成功接收或发送，发送和接收函数将返回。<br>SO_REUSEADDR<br>快速重启服务器程序<br>启动服务器程序的多个实例（绑定本地IP地址的多个别名）</p>
+</blockquote>
+<p><strong>阻塞/非阻塞模式</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fd,<span class="keyword">int</span> cmd,…)</span></span></span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>功能：<br>设置socket为阻塞/非阻塞模式<br>设置/获取socket的所有者<br>参数：<br>fd－文件（socket）描述符<br>cmd－执行的操作<br>其他参数－根据cmd选择适当参数<br>返回值：≥0－成功，-1－失败</p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>操作类型</th>
+<th>参数</th>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F_GETFL</td>
+<td>0</td>
+<td>描述符标志</td>
+<td>获得描述符标志</td>
+</tr>
+<tr>
+<td>F_SETFL</td>
+<td>O_NONBLOCK</td>
+<td>成功0，否则-1</td>
+<td>设置socket为非阻塞方式</td>
+</tr>
+<tr>
+<td>F_GETOWN</td>
+<td>int *</td>
+<td>成功0，否则-1</td>
+<td>获得socket的所有者</td>
+</tr>
+<tr>
+<td>F_SETOWN</td>
+<td>int *</td>
+<td>成功0，否则-1</td>
+<td>设置socket的所有者</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>非阻塞方式<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">fcntl(socket_fd,F_SETFL,fcntl(socket_fd,F_GETFL,<span class="number">0</span>)|O_NONBLOCK);</span><br></pre></td></tr></table></figure><br>阻塞方式<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">fcntl(socket_fd,F_SETFL,fcntl(socket_fd,F_GETFL,<span class="number">0</span>)&amp;^O_NONBLOCK);</span><br></pre></td></tr></table></figure></p>
+<p><strong>控制输入输出</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ioctl</span><span class="params">(<span class="keyword">int</span> fd,<span class="keyword">int</span> req,…)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>功能：控制输入输出<br>参数：<br>fd－文件（socket）描述符<br>req－执行的操作类型<br>第三个参数－总是指针类型，存储操作返回的数据或操作所需的数据<br>返回值：0－成功，-1－失败</p>
+</blockquote>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>操作类型</th>
+<th>参数类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SIOCATMARK</td>
+<td>int*</td>
+<td>是否到达带外标志</td>
+</tr>
+<tr>
+<td>FIOASYNC</td>
+<td>int*</td>
+<td>异步输入/输出标志</td>
+</tr>
+<tr>
+<td>FIONREAD</td>
+<td>int*</td>
+<td>缓冲区中有多少字节数据可读</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="UDP-Socket编程"><a href="#UDP-Socket编程" class="headerlink" title="UDP Socket编程"></a>UDP Socket编程</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span>* <span class="title">saddrp</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="comment">//创建socket</span></span><br><span class="line">     <span class="keyword">int</span> sockfd = socket(AF_INET,SOCK_DGRAM,<span class="number">0</span>);</span><br><span class="line">     <span class="keyword">if</span> (<span class="number">0</span> &gt; sockfd)</span><br><span class="line">     &#123;</span><br><span class="line">          perror(<span class="string">&quot;sockfd&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">//准备地址</span></span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">addr</span> =</span> &#123;&#125;;</span><br><span class="line">     addr.sin_family = AF_INET;<span class="comment">//ipv4</span></span><br><span class="line">     addr.sin_port = htons(<span class="number">5577</span>);<span class="comment">//端口号</span></span><br><span class="line">     addr.sin_addr.s_addr = inet_addr(<span class="string">&quot;192.168.2.177&quot;</span>);<span class="comment">//我的ip地址</span></span><br><span class="line">     <span class="comment">//绑定</span></span><br><span class="line">     <span class="keyword">int</span> ret = bind(sockfd,(saddrp)&amp;addr,<span class="keyword">sizeof</span>(addr));</span><br><span class="line">     <span class="keyword">if</span> (<span class="number">0</span> &gt; ret)</span><br><span class="line">     &#123;</span><br><span class="line">          perror(<span class="string">&quot;bind&quot;</span>);</span><br><span class="line">          <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">src_addr</span> =</span>&#123;&#125;;</span><br><span class="line">     <span class="keyword">socklen_t</span> addr_len = <span class="keyword">sizeof</span>(struct sockaddr_in);</span><br><span class="line">     <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">     &#123;</span><br><span class="line">          <span class="keyword">char</span> buf[<span class="number">255</span>] = &#123;&#125;;</span><br><span class="line">          <span class="comment">//接收数据和来源的ip地址</span></span><br><span class="line">          recvfrom(sockfd,buf,<span class="keyword">sizeof</span>(buf),<span class="number">0</span>,(saddrp)&amp;src_addr,&amp;addr_len);</span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">&quot;Recv:%s\n&quot;</span>,buf);</span><br><span class="line">          <span class="keyword">if</span> (<span class="number">0</span> == <span class="built_in">strcmp</span>(buf,<span class="string">&quot;q&quot;</span>)) <span class="keyword">break</span>;</span><br><span class="line">          <span class="comment">//发送数据给目标地址</span></span><br><span class="line">          <span class="built_in">printf</span>(<span class="string">&quot;Please input the return value:&quot;</span>);</span><br><span class="line">          gets(buf);</span><br><span class="line">          sendto(sockfd,buf,<span class="built_in">strlen</span>(buf)+<span class="number">1</span>,<span class="number">0</span>,(saddrp)&amp;src_addr,addr_len);</span><br><span class="line">          <span class="keyword">if</span> (<span class="number">0</span> == <span class="built_in">strcmp</span>(buf,<span class="string">&quot;q&quot;</span>)) <span class="keyword">break</span>;</span><br><span class="line">     &#125;  </span><br><span class="line">     <span class="comment">//关闭socket对象</span></span><br><span class="line">     close(sockfd);</span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="原始socket编程"><a href="#原始socket编程" class="headerlink" title="原始socket编程"></a>原始socket编程</h1><p><strong>创建原始socket</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span> <span class="params">(<span class="keyword">int</span> family, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span></span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>参数：<br>family－AF_INET<br>type－SOCK_RAW<br>protocol<br>IPPROTO_ICMP－ICMP数据包<br>IPPROTO_IGMP－IGMP数据包<br>IPPROTO_IP－IP数据包<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">send_icmp</span><span class="params">(<span class="keyword">int</span> sockfd,sockaddr_in send_addr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">short</span> <span class="keyword">int</span> seq=<span class="number">0</span>;</span><br><span class="line">     <span class="keyword">char</span> buf[<span class="number">8</span>+<span class="number">8</span>];</span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">icmphdr</span> *<span class="title">icmp</span>=</span>(struct icmphdr *)buf;</span><br><span class="line">     icmp-&gt;type=ICMP_ECHO;</span><br><span class="line">     icmp-&gt;code=<span class="number">0</span>;</span><br><span class="line">     icmp-&gt;checksum=CHECK_SUM;</span><br><span class="line">     icmp-&gt;un.echo.id=getpid();</span><br><span class="line">     icmp-&gt;un.echo.sequence=seq++;</span><br><span class="line">     <span class="keyword">int</span> len=send(sockfd,buf,buflen);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">recv_icmp</span><span class="params">(<span class="keyword">int</span> sockfd,sockaddr_in send_addr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="keyword">char</span> buf[<span class="number">256</span>];</span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">icmphdr</span> *<span class="title">icmp</span>;</span></span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">ip</span> *<span class="title">ip</span>;</span></span><br><span class="line">     <span class="keyword">int</span> ipheadlen;</span><br><span class="line">     <span class="keyword">int</span> icmplen;</span><br><span class="line">     <span class="keyword">int</span> n=recvfrom(sockfd,buf,<span class="keyword">sizeof</span>(buf),<span class="number">0</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>);</span><br><span class="line">     <span class="keyword">if</span>(n&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">          <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;recv error&quot;</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     ip=(struct ip *)buf;	</span><br><span class="line">     ipheadlen=ip-&gt;ip_hl&lt;&lt;<span class="number">2</span>;</span><br><span class="line">     icmplen=n-ipheadlen;</span><br><span class="line">     icmp=(struct icmphdr *)(buf+ipheadlen);</span><br><span class="line">     <span class="keyword">if</span>(icmp-&gt;type==ICMP_ECHOREPLY)</span><br><span class="line">          <span class="built_in">cout</span>&lt;&lt;<span class="string">&quot;recv from &quot;</span>&lt;&lt;inet_ntoa(send_addr.sin_addr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Socket</tag>
+        <tag>Linux</tag>
+        <tag>NOTE</tag>
+        <tag>C</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NOTE|计算机组织与体系结构</title>
+    <url>/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/</url>
+    <content><![CDATA[<p><strong>计组知识点的总结笔记</strong><br><span id="more"></span></p>
+<h1 id="（一）计算机系统概论"><a href="#（一）计算机系统概论" class="headerlink" title="（一）计算机系统概论"></a>（一）计算机系统概论</h1><h2 id="1-复习内容"><a href="#1-复习内容" class="headerlink" title="1.复习内容"></a>1.复习内容</h2><p>计算机的基本组成，冯.诺依曼计算机原理，计算机系统的层次结构，计算机的分类及性能描述，计算机的发展历程</p>
+<h2 id="2-具体要求"><a href="#2-具体要求" class="headerlink" title="2.具体要求"></a>2.具体要求</h2><h3 id="计算机的基本组成"><a href="#计算机的基本组成" class="headerlink" title="计算机的基本组成"></a>计算机的基本组成</h3><h4 id="硬件组成"><a href="#硬件组成" class="headerlink" title="硬件组成"></a>硬件组成</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/1.png" alt="1"></p>
+<ul>
+<li>运算器：主要功能是进行加、减、乘、除等算术运算,还可进行逻辑运算</li>
+<li>存储器：目前采用半导体器件来担当此任务。通常，在存储器中保存一个数的16个触发器,称为一个存储单元。存储器是由许多存储单元组成。每个存储单元的编号,称为地址。向存储器中存数或者从存储器中取数，都要按给定的地址来寻找所选的存储单元。</li>
+<li>控制器：从内存中取出解题步骤加以分析,然后执行某种操作。</li>
+<li>计算机的输入/输出设备通常称为外围设备。适配器的作用相当与一个转换器。它可以保证外围设备用计算机系统特性所要求的形式发送或接受信息。  <h4 id="软件组成"><a href="#软件组成" class="headerlink" title="软件组成"></a>软件组成</h4>计算机软件一般分为两大类：一类叫系统程序,一类叫应用程序。<br>系统程序用来简化程序设计,简化使用方法,提高计算机的使用效率,发挥和扩大计算机的功能及用途。<br>应用程序是用户利用计算机来解决某些问题所编制的程序。</li>
+</ul>
+<h3 id="冯-诺依曼计算机工作原理"><a href="#冯-诺依曼计算机工作原理" class="headerlink" title="冯.诺依曼计算机工作原理"></a>冯.诺依曼计算机工作原理</h3><h4 id="冯-诺依曼计算机结构及工作过程"><a href="#冯-诺依曼计算机结构及工作过程" class="headerlink" title="冯.诺依曼计算机结构及工作过程"></a>冯.诺依曼计算机结构及工作过程</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/2.png" alt="2"></p>
+<h4 id="冯-诺依曼计算机特点"><a href="#冯-诺依曼计算机特点" class="headerlink" title="冯.诺依曼计算机特点"></a>冯.诺依曼计算机特点</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/3.png" alt="3"></p>
+<h3 id="计算机系统的层次结构"><a href="#计算机系统的层次结构" class="headerlink" title="计算机系统的层次结构"></a>计算机系统的层次结构</h3><h4 id="层次结构图"><a href="#层次结构图" class="headerlink" title="层次结构图"></a>层次结构图</h4><p><img src="/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/4.png" alt="4"></p>
+<h4 id="各层的含义和界面定义"><a href="#各层的含义和界面定义" class="headerlink" title="各层的含义和界面定义"></a>各层的含义和界面定义</h4><h4 id="计算机体系结构、组成和实现定义"><a href="#计算机体系结构、组成和实现定义" class="headerlink" title="计算机体系结构、组成和实现定义"></a>计算机体系结构、组成和实现定义</h4><ul>
+<li>系统结构:由程序员所看到的计算机系统的属性，即概念性结构及功能特性。</li>
+<li>计算机组成:计算机系统的逻辑实现，包括最低层内部算法、数据流、控制流的逻辑实现</li>
+<li>计算机实现 :计算机实现就是指计算机组成的物理实现。</li>
+</ul>
+<h3 id="计算机的分类及性能描述"><a href="#计算机的分类及性能描述" class="headerlink" title="计算机的分类及性能描述"></a>计算机的分类及性能描述</h3><h4 id="Flynn分类法"><a href="#Flynn分类法" class="headerlink" title="Flynn分类法"></a>Flynn分类法</h4><h4 id="Amdahl定律和应用"><a href="#Amdahl定律和应用" class="headerlink" title="Amdahl定律和应用"></a>Amdahl定律和应用</h4><h4 id="吞吐量、响应时间"><a href="#吞吐量、响应时间" class="headerlink" title="吞吐量、响应时间"></a>吞吐量、响应时间</h4><h4 id="CPU时钟周期、主频、CPI、CPU执行时间"><a href="#CPU时钟周期、主频、CPI、CPU执行时间" class="headerlink" title="CPU时钟周期、主频、CPI、CPU执行时间"></a>CPU时钟周期、主频、CPI、CPU执行时间</h4><h4 id="MIPS、MFLOPS"><a href="#MIPS、MFLOPS" class="headerlink" title="MIPS、MFLOPS"></a>MIPS、MFLOPS</h4>]]></content>
+      <tags>
+        <tag>CS</tag>
+        <tag>NOTE</tag>
+        <tag>计组</tag>
       </tags>
   </entry>
   <entry>
