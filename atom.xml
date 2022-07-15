@@ -6,7 +6,7 @@
   <link href="https://mencia12.github.io/atom.xml" rel="self"/>
   
   <link href="https://mencia12.github.io/"/>
-  <updated>2021-05-23T11:30:37.856Z</updated>
+  <updated>2021-03-18T06:33:13.503Z</updated>
   <id>https://mencia12.github.io/</id>
   
   <author>
@@ -15,61 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>NOTE|思想政治理论</title>
-    <link href="https://mencia12.github.io/2021/05/07/%E6%94%BF%E6%B2%BB/"/>
-    <id>https://mencia12.github.io/2021/05/07/%E6%94%BF%E6%B2%BB/</id>
-    <published>2021-05-07T14:20:40.000Z</published>
-    <updated>2021-05-23T11:30:37.856Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;政治学习笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NOTE|《深入理解计算机系统》</title>
-    <link href="https://mencia12.github.io/2021/05/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/"/>
-    <id>https://mencia12.github.io/2021/05/05/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</id>
-    <published>2021-05-05T14:29:24.000Z</published>
-    <updated>2021-05-07T14:20:11.778Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;读书笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="CS" scheme="https://mencia12.github.io/tags/CS/"/>
-    
-    <category term="操作系统" scheme="https://mencia12.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NOTE|操作系统</title>
-    <link href="https://mencia12.github.io/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    <id>https://mencia12.github.io/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</id>
-    <published>2021-04-24T12:51:30.000Z</published>
-    <updated>2021-04-26T10:07:12.406Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;操作系统复习笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="CS" scheme="https://mencia12.github.io/tags/CS/"/>
-    
-    <category term="操作系统" scheme="https://mencia12.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
-  </entry>
   
   <entry>
     <title>Kindle|电子书排版总结</title>
@@ -161,80 +106,6 @@
   </entry>
   
   <entry>
-    <title>English|学习总结</title>
-    <link href="https://mencia12.github.io/2019/10/02/%E6%AF%8F%E6%97%A5%E8%8B%B1%E8%AF%AD/"/>
-    <id>https://mencia12.github.io/2019/10/02/%E6%AF%8F%E6%97%A5%E8%8B%B1%E8%AF%AD/</id>
-    <published>2019-10-01T16:06:31.000Z</published>
-    <updated>2021-01-02T09:54:51.876Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;单词，短语，长难句。Day Day up&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="英语" scheme="https://mencia12.github.io/tags/%E8%8B%B1%E8%AF%AD/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NOTE|计算机组织与体系结构</title>
-    <link href="https://mencia12.github.io/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/"/>
-    <id>https://mencia12.github.io/2019/09/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90/</id>
-    <published>2019-09-26T03:23:49.000Z</published>
-    <updated>2021-01-19T04:31:48.405Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;计组知识点的总结笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="CS" scheme="https://mencia12.github.io/tags/CS/"/>
-    
-    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
-    
-    <category term="计组" scheme="https://mencia12.github.io/tags/%E8%AE%A1%E7%BB%84/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NOTE|数据结构</title>
-    <link href="https://mencia12.github.io/2019/08/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
-    <id>https://mencia12.github.io/2019/08/20/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</id>
-    <published>2019-08-20T07:22:50.000Z</published>
-    <updated>2021-07-23T14:34:12.008Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;数据结构复习笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="CS" scheme="https://mencia12.github.io/tags/CS/"/>
-    
-    <category term="数据结构" scheme="https://mencia12.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>NOTE|高等数学</title>
-    <link href="https://mencia12.github.io/2019/07/16/%E6%95%B0%E5%AD%A6/"/>
-    <id>https://mencia12.github.io/2019/07/16/%E6%95%B0%E5%AD%A6/</id>
-    <published>2019-07-16T00:56:15.000Z</published>
-    <updated>2021-01-19T04:25:33.557Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;数学学习笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
-    
-  </entry>
-  
-  <entry>
     <title>Python|基于BOF算法的图像检索</title>
     <link href="https://mencia12.github.io/2019/07/07/BOF/"/>
     <id>https://mencia12.github.io/2019/07/07/BOF/</id>
@@ -312,9 +183,9 @@
     
     
     
-    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
-    
     <category term="机器学习" scheme="https://mencia12.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
     
   </entry>
   
@@ -397,6 +268,159 @@
     <category term="Windows" scheme="https://mencia12.github.io/tags/Windows/"/>
     
     <category term="Linux" scheme="https://mencia12.github.io/tags/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>NOTE|网络程序设计</title>
+    <link href="https://mencia12.github.io/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/"/>
+    <id>https://mencia12.github.io/2019/06/14/%E7%BD%91%E7%BB%9C%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</id>
+    <published>2019-06-14T06:34:48.000Z</published>
+    <updated>2021-05-15T03:15:00.065Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;网络程序设计简单的总结&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;ψ(｀∇´)ψ&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Socket" scheme="https://mencia12.github.io/tags/Socket/"/>
+    
+    <category term="Linux" scheme="https://mencia12.github.io/tags/Linux/"/>
+    
+    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
+    
+    <category term="C" scheme="https://mencia12.github.io/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JAVA|RPC/RMI-书籍信息管理系统</title>
+    <link href="https://mencia12.github.io/2019/06/10/%E8%BF%9C%E7%A8%8B%E7%B1%BB%E8%B0%83%E7%94%A8/"/>
+    <id>https://mencia12.github.io/2019/06/10/%E8%BF%9C%E7%A8%8B%E7%B1%BB%E8%B0%83%E7%94%A8/</id>
+    <published>2019-06-10T15:25:51.000Z</published>
+    <updated>2021-01-02T09:55:33.793Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;使用RPC/RMI实现书籍信息管理系统及Web Service改写&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Java" scheme="https://mencia12.github.io/tags/Java/"/>
+    
+    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    <category term="Web" scheme="https://mencia12.github.io/tags/Web/"/>
+    
+    <category term="RMI" scheme="https://mencia12.github.io/tags/RMI/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Python|SIFT算法</title>
+    <link href="https://mencia12.github.io/2019/06/08/SIFT/"/>
+    <id>https://mencia12.github.io/2019/06/08/SIFT/</id>
+    <published>2019-06-08T12:13:13.000Z</published>
+    <updated>2021-01-02T09:58:07.575Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;尺度不变特征变换（Scale-invariant feature transform，SIFT），是用于图像处理领域的一种描述。&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Python" scheme="https://mencia12.github.io/tags/Python/"/>
+    
+    <category term="OpenCV" scheme="https://mencia12.github.io/tags/OpenCV/"/>
+    
+    <category term="SIFT" scheme="https://mencia12.github.io/tags/SIFT/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JAVA|MapReduce-自连接算法</title>
+    <link href="https://mencia12.github.io/2019/06/04/hadoop2/"/>
+    <id>https://mencia12.github.io/2019/06/04/hadoop2/</id>
+    <published>2019-06-04T04:45:28.000Z</published>
+    <updated>2021-01-02T09:56:37.452Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;环境:&lt;/strong&gt; Hadoop 3.0.0+Win10&lt;br&gt;&lt;strong&gt;实现功能：&lt;/strong&gt;&lt;br&gt;找出所有具有grandchild-grandparent关系的人名组。&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Java" scheme="https://mencia12.github.io/tags/Java/"/>
+    
+    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    <category term="Hadoop" scheme="https://mencia12.github.io/tags/Hadoop/"/>
+    
+    <category term="MapReduce" scheme="https://mencia12.github.io/tags/MapReduce/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Python|遗传算法实现</title>
+    <link href="https://mencia12.github.io/2019/06/02/ga/"/>
+    <id>https://mencia12.github.io/2019/06/02/ga/</id>
+    <published>2019-06-02T08:52:30.000Z</published>
+    <updated>2021-01-02T09:56:07.389Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;遗传算法（genetic algorithm）是计算数学中用于解决最优化的搜索算法，是进化算法的一种。&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Python" scheme="https://mencia12.github.io/tags/Python/"/>
+    
+    <category term="GA" scheme="https://mencia12.github.io/tags/GA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>JAVA|MapReduce-计算平均成绩</title>
+    <link href="https://mencia12.github.io/2019/06/02/hadoop1/"/>
+    <id>https://mencia12.github.io/2019/06/02/hadoop1/</id>
+    <published>2019-06-02T06:53:36.000Z</published>
+    <updated>2021-01-02T09:56:29.102Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;环境:&lt;/strong&gt; Hadoop 3.0.0+Win10&lt;br&gt;&lt;strong&gt;实现功能：&lt;/strong&gt;&lt;br&gt;1 每个同学必修课的平均成绩&lt;br&gt;2 按科目统计每个班的平均成绩&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Java" scheme="https://mencia12.github.io/tags/Java/"/>
+    
+    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    <category term="Hadoop" scheme="https://mencia12.github.io/tags/Hadoop/"/>
+    
+    <category term="MapReduce" scheme="https://mencia12.github.io/tags/MapReduce/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hadoop|在Windows上安装Hadoop及WordCount示例</title>
+    <link href="https://mencia12.github.io/2019/05/27/hadoop/"/>
+    <id>https://mencia12.github.io/2019/05/27/hadoop/</id>
+    <published>2019-05-27T12:24:59.000Z</published>
+    <updated>2021-05-15T03:16:29.635Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;安装环境：&lt;br&gt;操作系统：Windows 10&lt;br&gt;JDK版本：JDK 1.8以上的Java开发和运行环境&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
+    <category term="Hadoop" scheme="https://mencia12.github.io/tags/Hadoop/"/>
+    
+    <category term="Windows" scheme="https://mencia12.github.io/tags/Windows/"/>
     
   </entry>
   
