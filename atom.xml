@@ -6,7 +6,7 @@
   <link href="https://mencia12.github.io/atom.xml" rel="self"/>
   
   <link href="https://mencia12.github.io/"/>
-  <updated>2021-03-18T06:33:13.503Z</updated>
+  <updated>2022-08-10T09:49:46.365Z</updated>
   <id>https://mencia12.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>社团检测</title>
+    <link href="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/"/>
+    <id>https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/</id>
+    <published>2022-08-10T09:49:38.000Z</published>
+    <updated>2022-08-10T09:49:46.365Z</updated>
+    
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>NOTE|操作系统</title>
+    <link href="https://mencia12.github.io/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    <id>https://mencia12.github.io/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</id>
+    <published>2021-04-24T12:51:30.000Z</published>
+    <updated>2022-08-10T09:47:13.873Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;strong&gt;操作系统复习笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="CS" scheme="https://mencia12.github.io/tags/CS/"/>
+    
+    <category term="操作系统" scheme="https://mencia12.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    
+  </entry>
   
   <entry>
     <title>Kindle|电子书排版总结</title>
@@ -183,9 +215,9 @@
     
     
     
-    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
-    
     <category term="机器学习" scheme="https://mencia12.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
     
   </entry>
   
@@ -288,9 +320,9 @@
     
     <category term="Linux" scheme="https://mencia12.github.io/tags/Linux/"/>
     
-    <category term="C" scheme="https://mencia12.github.io/tags/C/"/>
-    
     <category term="NOTE" scheme="https://mencia12.github.io/tags/NOTE/"/>
+    
+    <category term="C" scheme="https://mencia12.github.io/tags/C/"/>
     
   </entry>
   
@@ -377,50 +409,6 @@
     <category term="Python" scheme="https://mencia12.github.io/tags/Python/"/>
     
     <category term="GA" scheme="https://mencia12.github.io/tags/GA/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>JAVA|MapReduce-计算平均成绩</title>
-    <link href="https://mencia12.github.io/2019/06/02/hadoop1/"/>
-    <id>https://mencia12.github.io/2019/06/02/hadoop1/</id>
-    <published>2019-06-02T06:53:36.000Z</published>
-    <updated>2021-01-02T09:56:29.102Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;环境:&lt;/strong&gt; Hadoop 3.0.0+Win10&lt;br&gt;&lt;strong&gt;实现功能：&lt;/strong&gt;&lt;br&gt;1 每个同学必修课的平均成绩&lt;br&gt;2 按科目统计每个班的平均成绩&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="Java" scheme="https://mencia12.github.io/tags/Java/"/>
-    
-    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
-    
-    <category term="Hadoop" scheme="https://mencia12.github.io/tags/Hadoop/"/>
-    
-    <category term="MapReduce" scheme="https://mencia12.github.io/tags/MapReduce/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hadoop|在Windows上安装Hadoop及WordCount示例</title>
-    <link href="https://mencia12.github.io/2019/05/27/hadoop/"/>
-    <id>https://mencia12.github.io/2019/05/27/hadoop/</id>
-    <published>2019-05-27T12:24:59.000Z</published>
-    <updated>2021-05-15T03:16:29.635Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;安装环境：&lt;br&gt;操作系统：Windows 10&lt;br&gt;JDK版本：JDK 1.8以上的Java开发和运行环境&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
-    
-    <category term="Hadoop" scheme="https://mencia12.github.io/tags/Hadoop/"/>
-    
-    <category term="Windows" scheme="https://mencia12.github.io/tags/Windows/"/>
     
   </entry>
   
