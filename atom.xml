@@ -6,7 +6,7 @@
   <link href="https://mencia12.github.io/atom.xml" rel="self"/>
   
   <link href="https://mencia12.github.io/"/>
-  <updated>2022-08-10T09:49:46.365Z</updated>
+  <updated>2022-09-30T09:48:38.092Z</updated>
   <id>https://mencia12.github.io/</id>
   
   <author>
@@ -17,34 +17,45 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>社团检测</title>
-    <link href="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/"/>
-    <id>https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/</id>
-    <published>2022-08-10T09:49:38.000Z</published>
-    <updated>2022-08-10T09:49:46.365Z</updated>
+    <title>组合数学</title>
+    <link href="https://mencia12.github.io/2022/09/28/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/"/>
+    <id>https://mencia12.github.io/2022/09/28/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/</id>
+    <published>2022-09-28T07:51:14.000Z</published>
+    <updated>2022-09-30T09:48:38.092Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;第一章&quot;&gt;第一章&lt;/h1&gt;
+&lt;h2 id=&quot;加法法则和乘法法则&quot;&gt;1.1 加法法则和乘法法则&lt;/h2&gt;
+&lt;h2 id=&quot;一一对应&quot;&gt;1.2 一一对应&lt;/h2&gt;
+&lt;p&gt;例：100位选手要选出1位冠军，要举行多少场比赛？&lt;br&gt;</summary>
+        
+      
     
     
     
     
+    <category term="数学" scheme="https://mencia12.github.io/tags/%E6%95%B0%E5%AD%A6/"/>
     
   </entry>
   
   <entry>
-    <title>NOTE|操作系统</title>
-    <link href="https://mencia12.github.io/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    <id>https://mencia12.github.io/2021/04/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</id>
-    <published>2021-04-24T12:51:30.000Z</published>
-    <updated>2022-08-10T09:47:13.873Z</updated>
+    <title>社团检测</title>
+    <link href="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/"/>
+    <id>https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/</id>
+    <published>2022-08-10T09:49:38.000Z</published>
+    <updated>2022-09-29T09:22:13.657Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;操作系统复习笔记&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;对&lt;a href=&quot;https://arxiv.org/abs/2105.12584&quot;&gt;综述&lt;/a&gt;(&lt;a href=&quot;https://www.aminer.cn/research_report/60da8c5f30e4d5752f50e7af&quot;&gt;中文版&lt;/a&gt;)的学习总结&lt;/p&gt;</summary>
     
     
     
     
-    <category term="CS" scheme="https://mencia12.github.io/tags/CS/"/>
-    
-    <category term="操作系统" scheme="https://mencia12.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+    <category term="深度学习" scheme="https://mencia12.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
@@ -56,7 +67,7 @@
     <updated>2021-03-18T06:33:13.503Z</updated>
     
     
-    <summary type="html">&lt;p&gt;总结一些用于AZW3格式的排版&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;总结一些用于AZW3格式的排版&lt;/p&gt;</summary>
     
     
     
@@ -73,7 +84,7 @@
     <updated>2021-01-19T04:26:20.279Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;Windows 10 专业版&lt;br&gt;Pycharm 2020.2&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;Windows 10 专业版 Pycharm 2020.2&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -83,14 +94,14 @@
   </entry>
   
   <entry>
-    <title>Python|有趣的小工具</title>
+    <title>Python|学习总结</title>
     <link href="https://mencia12.github.io/2020/07/08/Python%E5%B0%8F%E6%8A%80%E5%B7%A7/"/>
     <id>https://mencia12.github.io/2020/07/08/Python%E5%B0%8F%E6%8A%80%E5%B7%A7/</id>
     <published>2020-07-08T08:25:54.000Z</published>
-    <updated>2021-01-02T09:57:38.002Z</updated>
+    <updated>2022-09-29T09:22:13.657Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;记录有趣的小技巧&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;记录有趣的小技巧&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -107,7 +118,7 @@
     <updated>2021-01-02T09:57:55.699Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;PyTorch使用心得&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;PyTorch使用心得&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -128,7 +139,7 @@
     <updated>2021-01-02T09:55:00.894Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;简单生成二维码&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;简单生成二维码&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -145,7 +156,7 @@
     <updated>2021-01-02T09:55:50.492Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;BoF(Bag of features)算法在图像分类中具有着重要的作用&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;BoF(Bag of features)算法在图像分类中具有着重要的作用&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -187,7 +198,7 @@
     <updated>2021-01-19T04:26:18.900Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;问题描述：&lt;/strong&gt;&lt;br&gt;有一个很大的文件，这文件中的内容全部都是数字，要求尝试从这个文件中找出最大的N个数字。&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;问题描述：&lt;/strong&gt; 有一个很大的文件，这文件中的内容全部都是数字，要求尝试从这个文件中找出最大的N个数字。&lt;/p&gt;</summary>
     
     
     
@@ -210,7 +221,7 @@
     <updated>2021-01-19T04:24:12.674Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;目前学习的机器学习知识点总结&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;目前学习的机器学习知识点总结&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -229,7 +240,7 @@
     <updated>2021-01-02T09:55:43.553Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;面向消息中间件（Message Oriented Middleware）提供了一种分布式消息队列服务，使得节点之间可以实现基于消息的形式灵活的异步通信。&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;面向消息中间件（Message Oriented Middleware）提供了一种分布式消息队列服务，使得节点之间可以实现基于消息的形式灵活的异步通信。&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -250,7 +261,7 @@
     <updated>2021-01-02T09:56:58.593Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;多线程版UDP及线程池版的TCP&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;多线程版UDP及线程池版的TCP&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -275,7 +286,7 @@
     <updated>2021-01-19T04:26:22.577Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;人工智能简单的笔记&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;ψ(｀∇´)ψ&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;人工智能简单的笔记&lt;/strong&gt; &lt;strong&gt;ψ(｀∇´)ψ&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -292,14 +303,14 @@
     <updated>2021-01-02T09:57:41.599Z</updated>
     
     
-    <summary type="html">&lt;p&gt;Windows 10 专业版&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;Windows 10 专业版&lt;/p&gt;</summary>
     
     
     
-    
-    <category term="Windows" scheme="https://mencia12.github.io/tags/Windows/"/>
     
     <category term="Linux" scheme="https://mencia12.github.io/tags/Linux/"/>
+    
+    <category term="Windows" scheme="https://mencia12.github.io/tags/Windows/"/>
     
   </entry>
   
@@ -311,7 +322,7 @@
     <updated>2021-05-15T03:15:00.065Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;网络程序设计简单的总结&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;ψ(｀∇´)ψ&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;网络程序设计简单的总结&lt;/strong&gt; &lt;strong&gt;ψ(｀∇´)ψ&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -334,7 +345,7 @@
     <updated>2021-01-02T09:55:33.793Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;使用RPC/RMI实现书籍信息管理系统及Web Service改写&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;使用RPC/RMI实现书籍信息管理系统及Web Service改写&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -357,7 +368,7 @@
     <updated>2021-01-02T09:58:07.575Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;尺度不变特征变换（Scale-invariant feature transform，SIFT），是用于图像处理领域的一种描述。&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;尺度不变特征变换（Scale-invariant feature transform，SIFT），是用于图像处理领域的一种描述。&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
@@ -378,7 +389,7 @@
     <updated>2021-01-02T09:56:37.452Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;环境:&lt;/strong&gt; Hadoop 3.0.0+Win10&lt;br&gt;&lt;strong&gt;实现功能：&lt;/strong&gt;&lt;br&gt;找出所有具有grandchild-grandparent关系的人名组。&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;环境:&lt;/strong&gt; Hadoop 3.0.0+Win10 &lt;strong&gt;实现功能：&lt;/strong&gt; 找出所有具有grandchild-grandparent关系的人名组。&lt;/p&gt;</summary>
     
     
     
@@ -401,7 +412,7 @@
     <updated>2021-01-02T09:56:07.389Z</updated>
     
     
-    <summary type="html">&lt;p&gt;&lt;strong&gt;遗传算法（genetic algorithm）是计算数学中用于解决最优化的搜索算法，是进化算法的一种。&lt;/strong&gt;&lt;br&gt;&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;&lt;strong&gt;遗传算法（genetic algorithm）是计算数学中用于解决最优化的搜索算法，是进化算法的一种。&lt;/strong&gt;&lt;/p&gt;</summary>
     
     
     
