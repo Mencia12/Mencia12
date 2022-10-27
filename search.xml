@@ -18,9 +18,7 @@
   <entry>
     <title>组合数学</title>
     <url>/2022/09/28/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/</url>
-    <content><![CDATA[<span id="more"></span>
-<h1 id="第一章">第一章</h1>
-<h2 id="加法法则和乘法法则">加法法则和乘法法则</h2>
+    <content><![CDATA[<p>学习总结 <span id="more"></span> # 第一章 ## 加法法则和乘法法则</p>
 <h2 id="一一对应">一一对应</h2>
 <p>例：100位选手要选出1位冠军，要举行多少场比赛？</p>
 <blockquote>
@@ -162,7 +160,9 @@
   <entry>
     <title>Python|学习总结</title>
     <url>/2020/07/08/Python%E5%B0%8F%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<p><strong>记录有趣的小技巧</strong> <span id="more"></span> # 基础学习</p>
+    <content><![CDATA[<p><strong>记录有趣的小技巧</strong> <span id="more"></span> # 基础学习 ## set() 函数 set() 函数创建一个无序不重复元素集，可进行关系测试，删除重复数据，还可以计算交集、差集、并集等。 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = set(&#x27;runoob&#x27;)</span><br><span class="line">y = set(&#x27;google&#x27;)</span><br><span class="line">x, y</span><br><span class="line">&gt;&gt;&gt; (set([&#x27;b&#x27;, &#x27;r&#x27;, &#x27;u&#x27;, &#x27;o&#x27;, &#x27;n&#x27;]), set([&#x27;e&#x27;, &#x27;o&#x27;, &#x27;g&#x27;, &#x27;l&#x27;]))</span><br><span class="line">x &amp; y         # 交集</span><br><span class="line">&gt;&gt;&gt; set([&#x27;o&#x27;])</span><br><span class="line">x | y         # 并集</span><br><span class="line">&gt;&gt;&gt; set([&#x27;b&#x27;, &#x27;e&#x27;, &#x27;g&#x27;, &#x27;l&#x27;, &#x27;o&#x27;, &#x27;n&#x27;, &#x27;r&#x27;, &#x27;u&#x27;])</span><br><span class="line">x - y         # 差集</span><br><span class="line">&gt;&gt;&gt; set([&#x27;r&#x27;, &#x27;b&#x27;, &#x27;u&#x27;, &#x27;n&#x27;])</span><br></pre></td></tr></table></figure></p>
+<h2 id="counter-函数">Counter() 函数</h2>
+<p>Counter是dict子类，用于计数可哈希的对象。元素被作为字典的key存储，它们的计数作为字典的value存储。 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from collections import Counter</span><br><span class="line">cnt = Counter()</span><br><span class="line">for word in [&#x27;red&#x27;, &#x27;blue&#x27;, &#x27;red&#x27;, &#x27;green&#x27;, &#x27;blue&#x27;, &#x27;blue&#x27;]:</span><br><span class="line">    cnt[word] += 1  # 如果键不存在，就返回0</span><br><span class="line">print cnt</span><br><span class="line">&gt;&gt;&gt; Counter(&#123;‘blue’: 3, ‘red’: 2, ‘green’: 1&#125;)</span><br></pre></td></tr></table></figure></p>
 <h1 id="实用工具">实用工具</h1>
 <h2 id="一键抠图">一键抠图</h2>
 <ol type="1">
@@ -594,6 +594,10 @@ r=\frac{\sum_{i=1}^{n}\left(X_{i}-\overline{x}\right)\left(Y_{i}-\overline{y}\ri
 <p>经过上面的步骤安装成功后，打开命令行，打开你要编译的文件的文件夹下，输入bash，启动子系统。下来的操作就和Linux中一样了。 <img src="/2019/06/19/linux%E5%AD%90%E7%B3%BB%E7%BB%9F/5.png" alt="5"></p>
 <h1 id="linux子系统的位置">Linux子系统的位置</h1>
 <p>以我的系统为例，WSL的root目录对应windows的： <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\name\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc\LocalState\rootfs</span><br></pre></td></tr></table></figure> 但实际上微软为我们提供了一个默认的变量可以直接指向WSL的目录，你可以在运行(win+R)或资源管理器的路径里直接输入<code>\\wsl$</code>进入Ubuntu的目录 <img src="/2019/06/19/linux%E5%AD%90%E7%B3%BB%E7%BB%9F/6.png" alt="6"> **** 以上就是Linux子系统的简单使用，如果有新的发现将会继续更新。 同时欢迎留言分享！ヾ(•ω•`)o</p>
+<h1 id="wsl安装软件报错sbinldconfig.real-usrlibwslliblibcuda.so.1-is-not-a-symbolic-link">WSL安装软件报错/sbin/ldconfig.real: /usr/lib/wsl/lib/libcuda.so.1 is not a symbolic link</h1>
+<p>解决 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /usr/lib/wsl</span><br><span class="line">sudo mkdir lib2</span><br><span class="line">sudo ln -s lib/* lib2</span><br></pre></td></tr></table></figure></p>
+<p>更改wsl配置文件 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/ld.so.conf.d/ld.wsl.conf</span><br></pre></td></tr></table></figure> 将 /usr/lib/wsl/lib 改为 /usr/lib/wsl/lib2 测试修改是否生效 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo ldconfig</span><br></pre></td></tr></table></figure></p>
+<p>永久修改 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo cat &gt;&gt; /etc/wsl.conf &lt;&lt; EOF</span><br></pre></td></tr></table></figure> <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[automount]</span><br><span class="line">ldconfig = fasle</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure></p>
 ]]></content>
       <tags>
         <tag>Linux</tag>
