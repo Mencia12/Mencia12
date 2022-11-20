@@ -6,7 +6,7 @@
   <link href="https://mencia12.github.io/atom.xml" rel="self"/>
   
   <link href="https://mencia12.github.io/"/>
-  <updated>2022-10-26T13:05:43.196Z</updated>
+  <updated>2022-11-20T14:26:10.369Z</updated>
   <id>https://mencia12.github.io/</id>
   
   <author>
@@ -17,11 +17,28 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>C++学习笔记</title>
+    <link href="https://mencia12.github.io/2022/11/15/c/"/>
+    <id>https://mencia12.github.io/2022/11/15/c/</id>
+    <published>2022-11-14T16:02:35.000Z</published>
+    <updated>2022-11-20T14:26:10.369Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;推荐网站：interview.huihut.com&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="C++" scheme="https://mencia12.github.io/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
     <title>组合数学</title>
     <link href="https://mencia12.github.io/2022/09/28/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/"/>
     <id>https://mencia12.github.io/2022/09/28/%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/</id>
     <published>2022-09-28T07:51:14.000Z</published>
-    <updated>2022-10-26T13:05:43.196Z</updated>
+    <updated>2022-11-13T11:53:23.635Z</updated>
     
     
     <summary type="html">&lt;p&gt;学习总结&lt;/p&gt;</summary>
@@ -392,25 +409,6 @@
     <category term="Hadoop" scheme="https://mencia12.github.io/tags/Hadoop/"/>
     
     <category term="MapReduce" scheme="https://mencia12.github.io/tags/MapReduce/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Python|遗传算法实现</title>
-    <link href="https://mencia12.github.io/2019/06/02/ga/"/>
-    <id>https://mencia12.github.io/2019/06/02/ga/</id>
-    <published>2019-06-02T08:52:30.000Z</published>
-    <updated>2021-01-02T09:56:07.389Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;遗传算法（genetic algorithm）是计算数学中用于解决最优化的搜索算法，是进化算法的一种。&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="Python" scheme="https://mencia12.github.io/tags/Python/"/>
-    
-    <category term="GA" scheme="https://mencia12.github.io/tags/GA/"/>
     
   </entry>
   
