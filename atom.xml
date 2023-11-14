@@ -6,7 +6,7 @@
   <link href="https://mencia12.github.io/atom.xml" rel="self"/>
   
   <link href="https://mencia12.github.io/"/>
-  <updated>2023-03-21T06:50:34.240Z</updated>
+  <updated>2023-10-08T01:20:53.075Z</updated>
   <id>https://mencia12.github.io/</id>
   
   <author>
@@ -17,11 +17,30 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>刷刷刷</title>
+    <link href="https://mencia12.github.io/2023/04/03/%E5%88%B7%E5%88%B7%E5%88%B7/"/>
+    <id>https://mencia12.github.io/2023/04/03/%E5%88%B7%E5%88%B7%E5%88%B7/</id>
+    <published>2023-04-03T11:47:23.000Z</published>
+    <updated>2023-10-08T01:20:53.075Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;刷题记录&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="Python" scheme="https://mencia12.github.io/tags/Python/"/>
+    
+    <category term="C++" scheme="https://mencia12.github.io/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
     <title>算法</title>
     <link href="https://mencia12.github.io/2023/02/28/%E7%AE%97%E6%B3%95/"/>
     <id>https://mencia12.github.io/2023/02/28/%E7%AE%97%E6%B3%95/</id>
     <published>2023-02-28T06:38:47.000Z</published>
-    <updated>2023-03-21T06:50:34.240Z</updated>
+    <updated>2023-10-08T01:20:53.090Z</updated>
     
     
     <summary type="html">&lt;p&gt;算法课程笔记&lt;/p&gt;</summary>
@@ -74,10 +93,10 @@
     <link href="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/"/>
     <id>https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/</id>
     <published>2022-08-10T09:49:38.000Z</published>
-    <updated>2023-03-21T06:45:33.550Z</updated>
+    <updated>2023-11-14T08:31:28.738Z</updated>
     
     
-    <summary type="html">&lt;p&gt;对&lt;a href=&quot;https://arxiv.org/abs/2105.12584&quot;&gt;综述&lt;/a&gt;(&lt;a href=&quot;https://www.aminer.cn/research_report/60da8c5f30e4d5752f50e7af&quot;&gt;中文版&lt;/a&gt;)的学习总结&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;论文阅读笔记&lt;/p&gt;</summary>
     
     
     
@@ -125,7 +144,7 @@
     <link href="https://mencia12.github.io/2020/07/08/Python%E5%B0%8F%E6%8A%80%E5%B7%A7/"/>
     <id>https://mencia12.github.io/2020/07/08/Python%E5%B0%8F%E6%8A%80%E5%B7%A7/</id>
     <published>2020-07-08T08:25:54.000Z</published>
-    <updated>2022-10-26T13:04:25.707Z</updated>
+    <updated>2023-10-08T01:20:53.075Z</updated>
     
     
     <summary type="html">&lt;p&gt;&lt;strong&gt;记录有趣的小技巧&lt;/strong&gt;&lt;/p&gt;</summary>
@@ -138,11 +157,11 @@
   </entry>
   
   <entry>
-    <title>Python|PyTorch入门教程</title>
+    <title>Python|PyTorch学习记录</title>
     <link href="https://mencia12.github.io/2020/07/08/pytorch/"/>
     <id>https://mencia12.github.io/2020/07/08/pytorch/</id>
     <published>2020-07-08T08:06:25.000Z</published>
-    <updated>2021-01-02T09:57:55.699Z</updated>
+    <updated>2023-11-14T08:31:28.738Z</updated>
     
     
     <summary type="html">&lt;p&gt;&lt;strong&gt;PyTorch使用心得&lt;/strong&gt;&lt;/p&gt;</summary>
@@ -232,11 +251,11 @@
     
     <category term="Java" scheme="https://mencia12.github.io/tags/Java/"/>
     
+    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
+    
     <category term="Hadoop" scheme="https://mencia12.github.io/tags/Hadoop/"/>
     
     <category term="MapReduce" scheme="https://mencia12.github.io/tags/MapReduce/"/>
-    
-    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
     
   </entry>
   
@@ -295,9 +314,9 @@
     
     <category term="Java" scheme="https://mencia12.github.io/tags/Java/"/>
     
-    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
-    
     <category term="Socket" scheme="https://mencia12.github.io/tags/Socket/"/>
+    
+    <category term="分布式" scheme="https://mencia12.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"/>
     
     <category term="TCP" scheme="https://mencia12.github.io/tags/TCP/"/>
     
@@ -335,9 +354,9 @@
     
     
     
-    <category term="Linux" scheme="https://mencia12.github.io/tags/Linux/"/>
-    
     <category term="Windows" scheme="https://mencia12.github.io/tags/Windows/"/>
+    
+    <category term="Linux" scheme="https://mencia12.github.io/tags/Linux/"/>
     
   </entry>
   
@@ -384,27 +403,6 @@
     <category term="Web" scheme="https://mencia12.github.io/tags/Web/"/>
     
     <category term="RMI" scheme="https://mencia12.github.io/tags/RMI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Python|SIFT算法</title>
-    <link href="https://mencia12.github.io/2019/06/08/SIFT/"/>
-    <id>https://mencia12.github.io/2019/06/08/SIFT/</id>
-    <published>2019-06-08T12:13:13.000Z</published>
-    <updated>2021-01-02T09:58:07.575Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;&lt;strong&gt;尺度不变特征变换（Scale-invariant feature transform，SIFT），是用于图像处理领域的一种描述。&lt;/strong&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="Python" scheme="https://mencia12.github.io/tags/Python/"/>
-    
-    <category term="OpenCV" scheme="https://mencia12.github.io/tags/OpenCV/"/>
-    
-    <category term="SIFT" scheme="https://mencia12.github.io/tags/SIFT/"/>
     
   </entry>
   

@@ -23,30 +23,28 @@
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;mencia12.github.io&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Gemini&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:true,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
 <meta name="description" content="PyTorch使用心得">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python|PyTorch入门教程">
+<meta property="og:title" content="Python|PyTorch学习记录">
 <meta property="og:url" content="https://mencia12.github.io/2020/07/08/pytorch/index.html">
 <meta property="og:site_name" content="Mencia&#39;s Blog">
 <meta property="og:description" content="PyTorch使用心得">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mencia12.github.io/2020/07/08/pytorch/1.png">
 <meta property="article:published_time" content="2020-07-08T08:06:25.000Z">
-<meta property="article:modified_time" content="2021-01-02T09:57:55.699Z">
+<meta property="article:modified_time" content="2023-11-14T08:31:28.738Z">
 <meta property="article:author" content="Mengqiu">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="深度学习">
 <meta property="article:tag" content="PyTorch">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://mencia12.github.io/2020/07/08/pytorch/1.png">
 
 
 <link rel="canonical" href="https://mencia12.github.io/2020/07/08/pytorch/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;mencia12.github.io&#x2F;2020&#x2F;07&#x2F;08&#x2F;pytorch&#x2F;&quot;,&quot;path&quot;:&quot;2020&#x2F;07&#x2F;08&#x2F;pytorch&#x2F;&quot;,&quot;title&quot;:&quot;Python|PyTorch入门教程&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;mencia12.github.io&#x2F;2020&#x2F;07&#x2F;08&#x2F;pytorch&#x2F;&quot;,&quot;path&quot;:&quot;2020&#x2F;07&#x2F;08&#x2F;pytorch&#x2F;&quot;,&quot;title&quot;:&quot;Python|PyTorch学习记录&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
-<title>Python|PyTorch入门教程 | Mencia's Blog</title><script src="/js/config.js"></script>
+<title>Python|PyTorch学习记录 | Mencia's Blog</title><script src="/js/config.js"></script>
   
   <script class="next-config" data-name="google_analytics" type="application/json">{&quot;tracking_id&quot;:&quot;G-HGZ1KVDPC6&quot;,&quot;only_pageview&quot;:true}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
@@ -144,7 +142,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -157,6 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85pyg"><span class="nav-number">1.</span> <span class="nav-text">安装PyG</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu-gpu%E7%9B%91%E6%8E%A7"><span class="nav-number">2.1.</span> <span class="nav-text">CPU, GPU监控</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -171,7 +170,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -241,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Python|PyTorch入门教程
+          Python|PyTorch学习记录
         </h1>
 
         <div class="post-meta-container">
@@ -259,7 +258,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-01-02 17:57:55" itemprop="dateModified" datetime="2021-01-02T17:57:55+08:00">2021-01-02</time>
+        <time title="修改时间：2023-11-14 16:31:28" itemprop="dateModified" datetime="2023-11-14T16:31:28+08:00">2023-11-14</time>
       </span>
 
   
@@ -279,7 +278,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><strong>PyTorch使用心得</strong> <span id="more"></span> # 安装 进入<a target="_blank" rel="noopener" href="https://pytorch.org/get-started/locally/">PyTorch官网</a>，按照提示选择 <img src="/2020/07/08/pytorch/1.png" alt="1"> &gt;这里</p>
+        <p><strong>PyTorch使用心得</strong> <span id="more"></span> # 创建虚拟环境 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda create -n c_d python=3.7</span><br></pre></td></tr></table></figure> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda activate c_d</span><br></pre></td></tr></table></figure> # 安装PyTorch 进入<a target="_blank" rel="noopener" href="https://pytorch.org/get-started/locally/">PyTorch官网</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.6 -c pytorch -c nvidia</span><br></pre></td></tr></table></figure>
+<p>or <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116</span><br></pre></td></tr></table></figure></p>
+<h1 id="安装pyg">安装PyG</h1>
+<p>进入<a target="_blank" rel="noopener" href="https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html">PyG官网</a> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pip install torch_geometric</span><br><span class="line"></span><br><span class="line"># Optional dependencies:</span><br><span class="line">pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-1.13.0+cu116.html</span><br></pre></td></tr></table></figure></p>
+<h1 id="其他">其他</h1>
+<h2 id="cpu-gpu监控"><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/376875425">CPU, GPU监控</a></h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 从 PyPI 获取并安装</span><br><span class="line">$ pip3 install --upgrade nvitop</span><br><span class="line"></span><br><span class="line"># 从 GitHub 获取并安装最新版 (推荐)</span><br><span class="line">$ pip3 install git+https://github.com/XuehaiPan/nvitop.git#egg=nvitop</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 获取并显示机器资源信息 (只打印一次)</span><br><span class="line">$ nvitop -1          # 获取并显示机器资源信息 (所有 GPU)</span><br><span class="line">$ nvitop -1 -o 0 1   # 只显示 &lt;GPU 0&gt; 和 &lt;GPU 1&gt;</span><br><span class="line">$ nvitop -1 -ov      # 只显示 `CUDA_VISIBLE_DEVICES` 中的 GPU</span><br><span class="line">$ nvitop -1 -U       # 只使用 ASCII 字符 适用于不支持 Unicode 字符的终端</span><br><span class="line"></span><br><span class="line"># 资源监视器模式</span><br><span class="line">$ nvitop             # 资源监视器</span><br><span class="line">$ nvitop -m auto     # 资源监视器 (通过终端大小自动调整显示模式 (默认))</span><br><span class="line">$ nvitop -m full     # 资源监视器 (完全模式，无视窗口大小变化)</span><br><span class="line">$ nvitop -m compact  # 资源监视器 (紧凑模式，无视窗口大小变化)</span><br><span class="line">$ nvitop -m -o 0 1   # 只显示 &lt;GPU 0&gt; 和 &lt;GPU 1&gt;</span><br><span class="line">$ nvitop -m -ov      # 只显示 `CUDA_VISIBLE_DEVICES` 中的 GPU</span><br><span class="line">$ nvitop -m -U       # 只使用 ASCII 字符 适用于不支持 Unicode 字符的终端</span><br></pre></td></tr></table></figure>
 
     </div>
 

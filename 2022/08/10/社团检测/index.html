@@ -21,18 +21,21 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;mencia12.github.io&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Gemini&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:true,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
-<meta name="description" content="对综述(中文版)的学习总结">
+<meta name="description" content="论文阅读笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="社团检测">
 <meta property="og:url" content="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/index.html">
 <meta property="og:site_name" content="Mencia&#39;s Blog">
-<meta property="og:description" content="对综述(中文版)的学习总结">
+<meta property="og:description" content="论文阅读笔记">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/1.png">
+<meta property="og:image" content="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/2.png">
 <meta property="article:published_time" content="2022-08-10T09:49:38.000Z">
-<meta property="article:modified_time" content="2023-03-21T06:45:33.550Z">
+<meta property="article:modified_time" content="2023-11-14T08:31:28.738Z">
 <meta property="article:author" content="Mengqiu">
 <meta property="article:tag" content="深度学习">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/1.png">
 
 
 <link rel="canonical" href="https://mencia12.github.io/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/">
@@ -153,7 +156,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%9B%BE%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cgcn%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">3. 基于图卷积神经网络（GCN）的社区发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%9B%BE%E6%B3%A8%E6%84%8F%E5%8A%9B%E7%BD%91%E7%BB%9Cgat%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">4. 基于图注意力网络（GAT）的社区发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9Cgan%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">5. 基于生成对抗网络（GAN）的社区发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8ae%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">6. 基于自编码器（AE）的社区发现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E5%B1%82%E5%9B%BE"><span class="nav-number"></span> <span class="nav-text">多层图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#flattening"><span class="nav-number">1.</span> <span class="nav-text">Flattening</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#layer-by-layer"><span class="nav-number">2.</span> <span class="nav-text">Layer by layer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multilayer"><span class="nav-number">3.</span> <span class="nav-text">Multilayer</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0%E7%A0%94%E7%A9%B6%E7%BB%BC%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">基于深度学习的社区发现研究综述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%9B%BE%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Cgcn%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">3. 基于图卷积神经网络（GCN）的社区发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%9B%BE%E6%B3%A8%E6%84%8F%E5%8A%9B%E7%BD%91%E7%BB%9Cgat%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">4. 基于图注意力网络（GAT）的社区发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9Cgan%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">1.3.</span> <span class="nav-text">5. 基于生成对抗网络（GAN）的社区发现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8ae%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">1.4.</span> <span class="nav-text">6. 基于自编码器（AE）的社区发现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%A4%9A%E5%B1%82%E7%BD%91%E7%BB%9C%E7%9A%84%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B%E7%BB%BC%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">基于多层网络的社团检测综述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#flattening"><span class="nav-number">2.1.</span> <span class="nav-text">Flattening</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#layer-by-layer"><span class="nav-number">2.2.</span> <span class="nav-text">Layer by layer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multilayer"><span class="nav-number">2.3.</span> <span class="nav-text">Multilayer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%B7%B1%E5%BA%A6%E5%9B%BE%E4%BF%A1%E6%81%AF%E6%9C%80%E5%A4%A7%E5%8C%96%E7%9A%84%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B"><span class="nav-number">3.</span> <span class="nav-text">基于深度图信息最大化的社团检测</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E5%A4%9A%E5%9B%BE%E5%B5%8C%E5%85%A5%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%A7%86%E5%9B%BE%E8%81%9A%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">一致性多图嵌入用于多视图聚类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E6%97%A0%E7%9B%91%E7%9D%A3%E7%9A%84%E6%B7%B1%E5%BA%A6%E5%9B%BE%E7%BB%93%E6%9E%84%E5%AD%A6%E4%B9%A0"><span class="nav-number">5.</span> <span class="nav-text">面向无监督的深度图结构学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">5.1.</span> <span class="nav-text">背景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%A0%E7%9B%91%E7%9D%A3%E5%9B%BE%E8%A1%A8%E7%A4%BA%E5%AD%A6%E4%B9%A0"><span class="nav-number">6.</span> <span class="nav-text">简单的无监督图表示学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF-1"><span class="nav-number">6.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">6.2.</span> <span class="nav-text">方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#commdgi-%E9%9D%A2%E5%90%91%E6%B7%B1%E5%BA%A6%E5%9B%BE%E7%9A%84%E7%A4%BE%E5%8C%BA%E5%8F%91%E7%8E%B0"><span class="nav-number">7.</span> <span class="nav-text">CommDGI: 面向深度图的社区发现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF-2"><span class="nav-number">7.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-1"><span class="nav-number">7.2.</span> <span class="nav-text">方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#section"><span class="nav-number">8.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF-3"><span class="nav-number">8.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-2"><span class="nav-number">8.2.</span> <span class="nav-text">方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#section-1"><span class="nav-number">9.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF-4"><span class="nav-number">9.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-3"><span class="nav-number">9.2.</span> <span class="nav-text">方法</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -168,7 +171,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -256,7 +259,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-03-21 14:45:33" itemprop="dateModified" datetime="2023-03-21T14:45:33+08:00">2023-03-21</time>
+        <time title="修改时间：2023-11-14 16:31:28" itemprop="dateModified" datetime="2023-11-14T16:31:28+08:00">2023-11-14</time>
       </span>
 
   
@@ -276,9 +279,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>对<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2105.12584">综述</a>(<a target="_blank" rel="noopener" href="https://www.aminer.cn/research_report/60da8c5f30e4d5752f50e7af">中文版</a>)的学习总结</p>
+        <p>论文阅读笔记</p>
 <span id="more"></span>
-<p>注: Community Detection 本文翻译为社团检测</p>
+<h1 id="基于深度学习的社区发现研究综述">基于深度学习的社区发现研究综述</h1>
+<p>《A Comprehensive Survey on Community Detection with Deep Learning》</p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2105.12584">综述</a>(<a target="_blank" rel="noopener" href="https://www.aminer.cn/research_report/60da8c5f30e4d5752f50e7af">中文版</a>)的学习总结 注: Community Detection 本文翻译为社团检测</p>
 <!-- # 传统社区发现方法
 ## 1. 图划分
 
@@ -343,7 +348,8 @@
 ## 8. 基于深度稀疏滤波（SF）的社区发现
 
 稀疏滤波是一种简单的双层学习模型，它可以处理高维的图数据，将高度稀疏的输入表征为低维特征向量。为了探索节点的社团归属等更深入的信息，深度 SF 将多个隐层堆叠起来，从而对更多超参数和大量的平滑数据分布进行调优，其代表性的算法为 DSFCD。 -->
-<h1 id="多层图">多层图</h1>
+<h1 id="基于多层网络的社团检测综述">基于多层网络的社团检测综述</h1>
+<p>《Community Detection in Multiplex Networks》</p>
 <p>全局社区发现算法也可以分为以下三个典型的主要类。</p>
 <h2 id="flattening">Flattening</h2>
 <p>第一种方法是通过合并多层网络，使用所谓的扁平化算法，然后应用传统的社区发现算法，将多层网络简化为一个图。</p>
@@ -351,6 +357,59 @@
 <p>逐层的方法先对每层(例如,应用传统的社区发现算法)进行处理，再对处理后的结果进行合并。</p>
 <h2 id="multilayer">Multilayer</h2>
 <p>第三类算法直接在多路复用网络模型上运行。 &gt;属于这一类的基于随机游走者的方法允许游走者从一层切换到另一层。</p>
+<h1 id="基于深度图信息最大化的社团检测">基于深度图信息最大化的社团检测</h1>
+<p>《CommDGI: Community Detection Oriented Deep Graph Infomax》</p>
+<p>目前的挑战：</p>
+<ul>
+<li>无标签的图学习：一般来说，社区检测任务是在无标签的情况下进行的，这意味着神经工作本身会产生一些自监督信息，这些信息可以鼓励编码器的输出具有期望的特性。</li>
+<li>社区无关表示：通用图神经网络学习到的表示不能捕获聚类和社区结构信息。将聚类过程与图神经网络相结合以更好地处理社区发现问题是必要的，但也是具有挑战性的。</li>
+<li>纠缠表示：图神经网络在矩阵重构目标下学习到的表示是纠缠的，可解释性差。</li>
+<li>端到端学习：统一图和聚类学习对面向社区的图神经网络来说是具有挑战性但有用的。聚类分配可以帮助以社区相关的方式更新节点表示。</li>
+</ul>
+<p>为了克服这些问题，文章提出了CommDGI（Community Deep Graph Infomax）模型。在此框架中，为了编码能够感知到节点结构与社区的表示，采用最大化互信息来捕获局部和全局结构信息。不同于DGI，该模型提出了一种新的最大化互信息的范式。图互信息（Graph mutual information）是通过节点和图来进行计算，社区互信息（community mutual information）是通过节点和社区（子图）来进行计算。这两种互信息一起最大化来编码节点的图和聚类特征（the graph and clustering feature of each node）。</p>
+<h1 id="一致性多图嵌入用于多视图聚类">一致性多图嵌入用于多视图聚类</h1>
+<p>《Consistent Multiple Graph Embedding for Multi-View Clustering》</p>
+<p>本文提出了一种新颖的一致性多图嵌入聚类框架( CMGEC )。具体地，设计了多图自编码器( M-GAE )，利用多图注意力融合编码器对多视图数据的互补信息进行灵活编码。为了指导学习到的共同表示保持每个视图中相邻特征的相似性，引入了多视图互信息最大化模块( MMIM )。此外，设计了一个图融合网络( GFN )，从不同角度探索图之间的关系，并提供M - GAE所需的公共共识图。通过联合训练这些模型，可以得到共同的表示，从多个视图中编码更多的互补信息，更全面地描述数据。</p>
+<!-- 
+#
+
+《》
+
+## 背景
+
+## 方法
+![p](社团检测/1.png) -->
+<h1 id="面向无监督的深度图结构学习">面向无监督的深度图结构学习</h1>
+<p>《Towards Unsupervised Deep Graph Structure Learning》'www22'</p>
+<h2 id="背景">背景</h2>
+<p>目前优化图结构的方法侧重于监督学习场景，这导致了几个问题，即对标签的依赖、边缘分布的偏差以及对应用任务的限制。 ## 方法 <img src="/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/1.png" alt="p"> 首次提出采用GNN无监督的方法。</p>
+<h1 id="简单的无监督图表示学习">简单的无监督图表示学习</h1>
+<p>《Simple Unsupervised Graph Representation Learning》</p>
+<h2 id="背景-1">背景</h2>
+<p>实现有效且高效的对比学习。</p>
+<h2 id="方法">方法</h2>
+<p><img src="/2022/08/10/%E7%A4%BE%E5%9B%A2%E6%A3%80%E6%B5%8B/2.png" alt="p"> 为了获得有效性，我们设计了两个三元组损失来探索结构信息和邻居信息之间的互补信息以扩大类间变异，以及上带损失以减少类内变异。为了提高效率，我们的方法旨在删除用于生成锚嵌入和负嵌入的 GCN，以及从先前的图形对比学习中删除数据增强和鉴别器。</p>
+<h1 id="commdgi-面向深度图的社区发现">CommDGI: 面向深度图的社区发现</h1>
+<p>《CommDGI: Community Detection Oriented Deep Graph》'CIKM '20'</p>
+<h2 id="背景-2">背景</h2>
+<h2 id="方法-1">方法</h2>
+<figure>
+<img src alt><figcaption>p</figcaption>
+</figure>
+<h1 id="section"></h1>
+<p>《》</p>
+<h2 id="背景-3">背景</h2>
+<h2 id="方法-2">方法</h2>
+<figure>
+<img src alt><figcaption>p</figcaption>
+</figure>
+<h1 id="section-1"></h1>
+<p>《》</p>
+<h2 id="背景-4">背景</h2>
+<h2 id="方法-3">方法</h2>
+<figure>
+<img src alt><figcaption>p</figcaption>
+</figure>
 
     </div>
 
